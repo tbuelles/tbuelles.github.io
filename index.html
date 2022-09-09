@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./style/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./style/mystyle.css">
+    <link rel="shortcut icon" href="./pics/turquoise.ico"/>
+    <title>Tim-Henrik Buelles</title>
+
+</head>
+<body>
+
+
+<!--   <span class="w3-button w3-top w3-dark-grey w3-xxlarge w3-text-white w3-hover-text-black"  style="height: 64px;width:auto;right:0;" onclick="openNav()"><i class="fa fa-bars" ></i></span>-->
+
+<!--
+   <a href="./pics/bike.html" class=""><span class="w3-button w3-top w3-dark-grey w3-xxlarge w3-text-white w3-hover-text-black"  style="height: 64px;width:auto;right:0;">Home</span></a>
+
+-->
+   <!-- Sidebar-->
+<div class="w3-hide-medium w3-hide-small">
+
+    <nav class="w3-sidebar w3-display-right" style="width:30%">
+      <div class="bgimg"></div>
+    </nav>
+</div>
+
+<!---------------------------------------->
+
+<!--  Navbar  -->
+
+<div class="w3-top w3-bar w3-dark-grey" style="position: sticky; height: 56px">
+
+        <a class="w3-bar-item" href="https://www.ethz.ch" target="_blank"><img src="./lib/eth_logo_kurz_neg.svg" alt="ethz" style="height: 48px"></a>
+        <a class="w3-bar-item w3-button w3-right" href="teaching.html" style="width: 10%">Teaching</a>
+        <a class="w3-bar-item w3-button w3-right" href="research.html" style="width: 10%">Research</a>
+        <a class="active w3-bar-item w3-button w3-right" href="index.html" style="width: 10%">Home</a>
+</div>
+
+
+
+<!--
+Sidebar right
+<nav class="w3-sidebar w3-light-grey w3-animate-right w3-xxlarge" style="display:none;padding-top:150px;right:0;z-index:2" id="mySidebar">
+
+ <a href="javascript:void(0)" onclick="closeNav()" class="w3-display-topright w3-xxlarge" style="padding:0 16px">
+     <div class="sidebarButton"><span><i class="fa fa-remove" style="color: dimgray"></i></span></div>
+ </a>
+  <div class="w3-bar-block w3-center">
+    <a href="#home" class="w3-text-grey" onclick="closeNav()"><div class="sidebarButton"><span>Home</span></div></a>
+    <a href="#research" class="w3-text-grey" onclick="closeNav()"><div class="sidebarButton"><span>Research</span></div></a>
+    <a href="#paper" class="w3-text-grey" onclick="closeNav()"><div class="sidebarButton"><span>Paper</span></div></a>
+    <a href="#about" class="w3-text-grey" onclick="closeNav()"><div class="sidebarButton"><span>About</span></div></a>
+    <a href="#contact" class="w3-text-grey" onclick="closeNav()"><div class="sidebarButton"><span>Contact</span></div></a>
+  </div>
+  </nav>
+-->
+<div class="w3-main w3-padding-large" style="margin-right:30%">
+  <!-- Header -->
+  <header class="w3-container w3-center" style="padding:36px 16px" id="home">
+    <h1><b>Tim-Henrik Buelles</b></h1>
+     <p>
+            <button class="w3-button w3-round-large w3-dark-grey w3-text-white w3-hover-text-black"
+            style="padding-right: 12px;padding-left: 12px"><a href="mailto:buelles@math.ethz.ch" style="text-decoration: none">Mail</a> </button>
+            <button class="w3-button w3-round-large w3-dark-grey w3-text-white w3-hover-text-black" style="padding-right: 16px;padding-left: 16px"><a target="_blank" href="./lib/CV.pdf" style="text-decoration: none">CV</a> </button>
+
+        </p>
+     <img src="zoutelande.jpg" class="w3-image w3-hide-large w3-hide-small w3-round " style="display:block;width:70%;margin:auto;">
+    <img src="zoutelande.jpg" class="w3-image w3-hide-large w3-hide-medium w3-round" width="1000" height="1333">
+  </header>
+
+<!--About-->
+<div class="w3-padding-32 w3-content">
+    <h2 class="w3-text-grey">About me</h2>
+    <hr class="w3-opacity">
+        <p>I'm a PhD student in Mathematics at ETH Zürich in the group of <a class="w3-hover-text-gray" target="_blank" href="https://people.math.ethz.ch/~rahul/">Rahul Pandharipande</a>. Previously, I was an undergraduate student at the University of Bonn in the group of <a class="w3-hover-text-gray" target="_blank" href="https://www.math.uni-bonn.de/~huybrech/">Daniel Huybrechts</a>.
+          My <a class="w3-hover-text-gray" href="research.html">research</a> focuses on algebraic geometry with emphasize on enumerative geometry and various aspects of K3 surfaces and Calabi&ndash;Yau threefolds.
+
+<!--News-->
+    <h2 class="w3-text-grey">News</h2>
+    <hr class="w3-opacity">
+    <p>Starting in fall 2022, I am a Taussky&ndash;Todd Instructor in Mathematics at <a class="w3-hover-text-gray" target="_blank" href="https://www.caltech.edu/">Caltech</a>.</p>
+
+
+<!--Notes-->
+   <h2 class="w3-text-grey">Notes</h2>
+   <hr class="w3-opacity">
+   <p>Notes and slides from recent talks:</p>
+
+	<p><a class="w3-hover-text-gray" href="./notes/symmetry_slides.pdf" target="_blank">Symmetry and enumerative geometry of Calabi&ndash;Yau spaces</a></p>
+    <p><a class="w3-hover-text-gray" href="./notes/STUbeamer.pdf" target="_blank">Symmetry for stable pair invariants via derived equivalences -- the STU model</a></p>
+	<p><a class="w3-hover-text-gray" href="./notes/K3beamer.pdf" target="_blank">Curves on K3 surfaces -- what to do with multiple covers?</a></p>
+<!--  Contact-->
+  <div class="w3-padding-32 w3-content w3-text-grey" id="contact" style="margin-bottom:64px">
+    <h2>Contact</h2>
+    <hr class="w3-opacity">
+
+    <div class="w3-section">
+      <p><i class="fa fa-map-marker fa-fw w3-xxlarge w3-margin-right"></i> Rämistrasse 101, 8092 Zurich, Switzerland </p>
+      <p style="margin-left: 68px">Office HG J 16.4</p>
+      <p><i class="fa fa-phone fa-fw w3-xxlarge w3-margin-right"></i> Phone: +41 44 632 2392</p>
+      <p><i class="fa fa-envelope fa-fw w3-xxlarge w3-margin-right"> </i> Email: buelles(at)math.ethz.ch</p>
+    </div>
+    <div style="text-align: center">
+        <p >Trouble finding the building? Right here &darr;</p>
+        <img src="./pics/terrain.png" class="w3-image w3-greyscale" style="width:70%;margin:24px 0px">
+
+    </div>
+
+  </div>
+  <footer class="w3-container w3-text-grey w3-center w3-opacity w3-xlarge" style="margin:-82px">
+    <p>&copy; 2022 Tim-Henrik Buelles</p>
+  </footer>
+
+
+</div>
+
+
+
+<!--
+<script>
+// Open/ close sidebar
+function openNav() {
+  document.getElementById("mySidebar").style.width = "70%";
+  document.getElementById("mySidebar").style.display = "block";
+}
+
+function closeNav() {
+  document.getElementById("mySidebar").style.display = "none";
+}
+
+</script>
+-->
+
+
+</body>
+</html>
