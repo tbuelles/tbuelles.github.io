@@ -1,19 +1,23 @@
-*{font-family: "Futura"}
-
+* {
+  font-family: "Futura";
+}
 body {
     color: #424242;
     background-color: gainsboro;
     }
 
 .main {
-  padding: 32px 15vw;
+  margin-top: 7vh;
+  padding: 0 15vw;
 }
 
-.hr {
-  opacity:0.60;
+hr, .tbl tr {
+  border-top: none!important;
+  border-bottom: 1px solid #ccc!important;
 }
 
 .navbar {
+  border: none!important;
   padding: 0 15vw;
   top: 0;
   height:7vh;
@@ -28,24 +32,28 @@ body {
 }
 @media (max-width:680px) {
   .navbar {
-    padding: 0 5vw!important;
+    padding: 0!important;
+    padding-left: 3vw!important;
   }
   .bar-button {
     font-size: 3vw!important;
     max-width: 15vw!important;
   }
   .bar-logo {
-    font-size: 3vw!important;
+    font-size: 2vw!important;
     max-width: 5vw!important;
   }
   #profile-container {
     margin:auto!important;
-    height: 50vw!important;
+    height: 55vw!important;
     max-width: 50vw!important;
     float:none!important;
   }
   #top-hr {
     width: 100%!important;
+  }
+  .tbl td{
+    display: block!important;
   }
 }
 
@@ -69,14 +77,45 @@ img {
 
 /*body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}*/
 
-p {
+h1, h2, h3, h4, h5, h6 {
+  padding: 0 8px;
+}
+p, ul li {
   color:#616161!important;
   font-size: 18px;
   line-height: 1.8;
+  padding: 0 8px;
 }
-ul{font-size: 18px}
-table{font-size: 16px}
-.w3-row-padding img {margin-bottom: 12px}
+/*
+ul {
+  list-style-type: disc!important;
+} */
+
+.ulst {
+  list-style-type: disc!important;
+  list-style-position: outside;
+  line-height: 3em;
+  padding: 0 26px!important;
+  text-align:left;
+  font-size: 16px;
+}
+
+.ulst li {
+  line-height: 2.5;
+}
+.ulst li:last-child {border-bottom: none!important;}
+
+.tbl{
+  border-collapse: collapse;
+  border-spacing:0;
+  width:100%!important;
+  display:table;
+  font-size: 16px;
+}
+
+.tbl td, .tbl th {line-height: 2em;overflow:auto;padding:12px 8px;display:table-cell;text-align:left;vertical-align:top}
+.tbl tr:first-child, .tbl tr:last-child {border-bottom: none!important;}
+/* .tbl tr:nth-child(even){background-color:#ccc!important;} */
 /*
 .sidebarButton {
     color: w3-dark-grey;
@@ -97,21 +136,23 @@ table{font-size: 16px}
 }
 
 .bar-logo {
+  vertical-align:middle!important;
+  text-align:center!important;
   text-decoration: none;
   font-size: 14px;
   padding-right: 10px;
+  max-width: 10vw;
 }
 .logo {
   filter: gray; /* IE6-9 */
   -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
   filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
-  display:inline-block;
   vertical-align:middle;
   overflow:hidden;
   padding-right: 4px;
   padding-bottom: 4px;
-  height: 50%;
   max-height: 50%;
+  max-width: 7vw;
 }
 
 }
@@ -125,14 +166,25 @@ table{font-size: 16px}
 }
 
 .small-button {
+  border:none;
+  display:inline-block;
+  vertical-align:middle;
+  overflow:hidden;
+  text-decoration:none;
+  color:#fff!important;
+  background-color:inherit;
+  text-align:center;
+  cursor:pointer;
+  white-space:nowrap;
   padding: 6px 8px;
   width: 52px;
   font-size: 12px;
-  text-align: center;
+  border-radius:8px;
 }
+
 .bar-button{
   font-size: 20px;
-  border:none;
+  border:none!important;
   display:inline-block;
   vertical-align:middle;
   overflow:hidden;
@@ -147,12 +199,8 @@ table{font-size: 16px}
   width: 100px;
 }
 
-.bar-button:hover{
+.small-button:hover, .bar-button:hover{
   background-color:#ccc!important;
-}
-
-.w3-button:hover{
-    color: #fff!important;
 }
 
 .w3-panel{
@@ -166,6 +214,17 @@ table{font-size: 16px}
 #foot {
   width:100%;font-size:36px;opacity:0.6;margin:auto;text-align:center;
 }
+.fa-foot{font-size:36px!important;
+  margin-right:16px!important;
+  }
+  /*
+.fa{display:inline-block;font:normal normal normal 14px/1 FontAwesome;font-size:inherit;text-rendering:auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+.fa-envelope:before{content:"\f0e0";font-family: FontAwesome;}
+.fa-fw{width:1.28571429em;text-align:center}
+.fa-phone:before{content:"\f095"}
+.fa-map-marker:before{content:"\f041"} */
+
 /*
 tr:nth-child(even) {
   background-color: #f2f2f2;
