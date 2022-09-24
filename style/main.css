@@ -31,6 +31,9 @@ hr, .tbl tr {
   width:70%;
 }
 @media (max-width:680px) {
+  .main {
+    padding: 0 7vw!important;
+  }
   .navbar {
     padding: 0!important;
     padding-left: 3vw!important;
