@@ -1,5 +1,6 @@
 * {
   font-family: "Futura";
+  box-sizing: border-box;
 }
 body {
     color: #424242;
@@ -16,6 +17,10 @@ hr, .tbl tr {
   border-bottom: 1px solid #ccc!important;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  padding: 0 8px;
+}
+
 .navbar {
   border: none!important;
   padding: 0 15vw;
@@ -30,34 +35,24 @@ hr, .tbl tr {
 #top-hr {
   width:70%;
 }
-@media (max-width:680px) {
-  .main {
-    padding: 0 7vw!important;
-  }
-  .navbar {
-    padding: 0!important;
-    padding-left: 3vw!important;
-  }
-  .bar-button {
-    font-size: 3vw!important;
-    max-width: 15vw!important;
-  }
-  .bar-logo {
-    font-size: 2vw!important;
-    max-width: 5vw!important;
-  }
-  #profile-container {
-    margin:auto!important;
-    height: 55vw!important;
-    max-width: 50vw!important;
-    float:none!important;
-  }
-  #top-hr {
-    width: 100%!important;
-  }
-  .tbl td{
-    display: block!important;
-  }
+
+
+.bar-button{
+  font-size: min(20px, 3vw);
+  border:none!important;
+  display:inline-block;
+  vertical-align:middle;
+  overflow:hidden;
+  text-decoration:none;
+  color:inherit;
+  background-color:inherit;
+  text-align:center;
+  cursor:pointer;
+  white-space:nowrap;
+  float: right;
+  height: 100%;
+  width: auto;
+  padding: 0 8px;
 }
 
 img {
@@ -78,11 +73,6 @@ img {
   z-index: 1;
 }
 
-/*body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}*/
-
-h1, h2, h3, h4, h5, h6 {
-  padding: 0 8px;
-}
 p, ul li {
   color:#616161!important;
   font-size: 18px;
@@ -106,7 +96,9 @@ ul {
 .ulst li {
   line-height: 2.5;
 }
-.ulst li:last-child {border-bottom: none!important;}
+.ulst li:last-child {
+  border-bottom: none!important;
+  padding-bottom: 32px;}
 
 .tbl{
   border-collapse: collapse;
@@ -114,10 +106,13 @@ ul {
   width:100%!important;
   display:table;
   font-size: 16px;
+  margin-bottom: 32px;
 }
 
 .tbl td, .tbl th {line-height: 2em;overflow:auto;padding:12px 8px;display:table-cell;text-align:left;vertical-align:top}
-.tbl tr:first-child, .tbl tr:last-child {border-bottom: none!important;}
+.tbl tr:first-child, .tbl tr:last-child {
+  border-bottom: none!important;
+}
 /* .tbl tr:nth-child(even){background-color:#ccc!important;} */
 /*
 .sidebarButton {
@@ -143,7 +138,7 @@ ul {
   text-align:center!important;
   text-decoration: none;
   font-size: 14px;
-  padding-right: 10px;
+  padding-left: 8px;
   max-width: 10vw;
 }
 .logo {
@@ -185,29 +180,9 @@ ul {
   border-radius:8px;
 }
 
-.bar-button{
-  font-size: 20px;
-  border:none!important;
-  display:inline-block;
-  vertical-align:middle;
-  overflow:hidden;
-  text-decoration:none;
-  color:inherit;
-  background-color:inherit;
-  text-align:center;
-  cursor:pointer;
-  white-space:nowrap;
-  float: right;
-  height: 100%;
-  width: 100px;
-}
 
 .small-button:hover, .bar-button:hover{
   background-color:#ccc!important;
-}
-
-.w3-panel{
-    margin: 0px!important;
 }
 
 .active{
@@ -220,15 +195,87 @@ ul {
 .fa-foot{font-size:36px!important;
   margin-right:16px!important;
   }
-  /*
-.fa{display:inline-block;font:normal normal normal 14px/1 FontAwesome;font-size:inherit;text-rendering:auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 
-.fa-envelope:before{content:"\f0e0";font-family: FontAwesome;}
-.fa-fw{width:1.28571429em;text-align:center}
-.fa-phone:before{content:"\f095"}
-.fa-map-marker:before{content:"\f041"} */
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+}
 
+.gallery img{
+  border: 1px solid #ccc;
+}
 /*
-tr:nth-child(even) {
-  background-color: #f2f2f2;
-}*/
+.gallery img:hover {
+  border: 1px solid #777;
+} */
+
+/* Create four equal columns that sits next to each other */
+.column {
+  flex: 25%;
+  max-width: 25%;
+  padding: 0;
+  padding-left: 6px;
+}
+
+.column img {
+  margin: 5px 0;
+  vertical-align: middle;
+  width: 100%;
+}
+
+#pic-one {
+  display: none;
+}
+
+
+/* Responsive layout - makes a two column-layout instead of four columns */
+
+@media screen and (max-width:800px) {
+  .main {
+    padding: 0 7vw!important;
+  }
+  .navbar {
+    padding-left: 3vw!important;
+    padding-right: 0!important;
+
+  }
+  .bar-button {
+    max-width: 15vw!important;
+  }
+  .bar-logo {
+    font-size: 2vw!important;
+    max-width: 5vw!important;
+  }
+  #profile-container {
+    margin:auto!important;
+    height: 55vw!important;
+    max-width: 50vw!important;
+    float:none!important;
+  }
+  #top-hr {
+    width: 100%!important;
+  }
+  .tbl td{
+    display: block!important;
+  }
+  .column {
+    flex: 50%;
+    max-width: 50%;
+  }
+}
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column {
+    flex: 100%;
+    max-width: 100%;
+  }
+
+  #pic-one {
+    display: block;
+  }
+  #pic-two {
+    display: none;
+  }
+}
