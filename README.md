@@ -1,11 +1,7 @@
 ## tbuelles.github.io
 
 
-* Retype
-* npm
-* Python
-* HTML, CSS, JavaScript
-* API
-* RSS feeds
-* git and Github
-
+* Images K3, CY3, Polytopes, Mirror Symmetry
+* Code / ML
+* Gallery
+* News: SURF
