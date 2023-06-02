@@ -1,7 +1,6 @@
 ## tbuelles.github.io
 
 
-* Images K3, CY3, Polytopes, Mirror Symmetry
+* plot3d polytopes, mirror symmetry
 * Code / ML
 * Gallery
-* News: SURF

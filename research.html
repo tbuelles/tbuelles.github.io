@@ -9,6 +9,12 @@
   <title>Tim-Henrik Buelles</title>
 </head>
 <body>
+  <script src="/nbextensions/threejs-sage/r122/three.min.js"></script>
+  <script>
+    if ( !window.THREE ) document.write(' \
+  <script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@r122/build/three.min.js"><\/script> \
+              ');
+  </script>
 
 <!--  Navbar  -->
 <nav class="navbar dark-grey">
@@ -25,8 +31,15 @@
   <h2 class="text-grey" style="padding-top: 36px;">Overview</h2>
   <p>My current research focuses on applications of AI/ML in mathematics and physics. 
     I work on deep-learning numerical invariants of Calabi–Yau geometries, which play an important role in algebraic geometry and string theory.
-
   </p>
+  
+  <div id="myContainer">
+    <div id="myAnimation">
+      <script src="js/polytope.js"></script>
+    </div>
+  </div>
+  
+
   <!--  Paper -->
   <h2 class="text-grey">Paper</h2>
     <hr>
