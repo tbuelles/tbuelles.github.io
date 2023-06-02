@@ -9,7 +9,7 @@ body {
 
 .main {
   margin-top: 7vh;
-  padding: 0 15vw;
+  padding: 0 10vw;
 }
 
 hr, .tbl tr {
@@ -23,13 +23,23 @@ h1, h2, h3, h4, h5, h6 {
 
 .navbar {
   border: none!important;
-  padding: 0 15vw;
+  padding: 0 10vw;
   top: 0;
   height:7vh;
   position:fixed;
   width:100%;
   line-height:7vh;
   z-index: 2;
+}
+
+.contact-icon {
+  padding: 0px 2px;
+  font-size: 20px;
+
+}
+
+.contact-icon:hover {
+  color:#ccc!important;
 }
 
 #top-hr {
@@ -62,7 +72,7 @@ img {
 
 #profile-container {
   padding: 16px;
-  padding-top: 0;
+  padding-top: 8px;
   text-align: center;
   height: 340px;
   float:right;
@@ -133,18 +143,16 @@ ul {
   background-color:#616161!important
 }
 
-.bar-logo {
+.caltech-logo {
   vertical-align:middle!important;
   text-align:center!important;
   text-decoration: none;
-  font-size: 14px;
   padding-left: 8px;
   max-width: 10vw;
+  max-width: 5vw!important;
 }
+
 .logo {
-  filter: gray; /* IE6-9 */
-  -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
-  filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
   vertical-align:middle;
   overflow:hidden;
   padding-right: 4px;
@@ -153,6 +161,10 @@ ul {
   max-width: 7vw;
 }
 
+.gray-scale {
+  filter: gray; /* IE6-9 */
+  -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
+  filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
 }
 
 .center {
@@ -162,6 +174,7 @@ ul {
     margin-right: auto;
     width: 50%;
 }
+
 
 .small-button {
   border:none;
@@ -243,10 +256,7 @@ ul {
   .bar-button {
     max-width: 15vw!important;
   }
-  .bar-logo {
-    font-size: 2vw!important;
-    max-width: 5vw!important;
-  }
+  
   #profile-container {
     margin:auto!important;
     height: 55vw!important;
