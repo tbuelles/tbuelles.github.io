@@ -4,7 +4,7 @@
 }
 body {
     color: #424242;
-    background-color: gainsboro;
+    background-color: #ffffff;
     }
 
 .main {
@@ -42,8 +42,8 @@ h1, h2, h3, h4, h5, h6 {
   color:#ccc!important;
 }
 
-#top-hr {
-  width:70%;
+.top-hr {
+  width:80%;
 }
 
 
@@ -72,7 +72,6 @@ img {
 
 #profile-container {
   padding: 16px;
-  padding-top: 8px;
   text-align: center;
   height: 340px;
   float:right;
@@ -100,11 +99,11 @@ ul {
   line-height: 3em;
   padding: 0 26px!important;
   text-align:left;
-  font-size: 16px;
 }
 
 .ulst li {
   line-height: 2.5;
+  font-size: 16px;
 }
 .ulst li:last-child {
   border-bottom: none!important;
@@ -246,7 +245,7 @@ ul {
 
 @media screen and (max-width:800px) {
   .main {
-    padding: 0 7vw!important;
+    padding: 0 3vw!important;
   }
   .navbar {
     padding-left: 3vw!important;
@@ -259,8 +258,8 @@ ul {
   
   #profile-container {
     margin:auto!important;
-    height: 55vw!important;
-    max-width: 50vw!important;
+    height: 60vw!important;
+    max-width: 45vw!important;
     float:none!important;
   }
   #top-hr {
@@ -289,4 +288,47 @@ ul {
   #pic-two {
     display: none;
   }
+}
+
+.row {
+  display: flex;
+}
+
+.col-2 {
+  flex: 50%;
+}
+
+.polygon {
+  width: 100%!important;
+  height: 50vh!important;
+}
+
+#needtowrap {
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  columns: 2;
+}
+
+#needtowrap p {
+  margin: 0;
+}
+
+#needtowrap p + p {
+  text-indent: 1em;
+}
+
+.orange-dot {
+  height: 10px;
+  width: 10px;
+  background-color: #FF6C0C;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.green-dot {
+  height: 10px;
+  width: 10px;
+  background-color: #73A950;
+  border-radius: 50%;
+  display: inline-block;
 }

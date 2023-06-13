@@ -9,16 +9,10 @@
   <title>Tim-Henrik Buelles</title>
 </head>
 <body>
-  <script src="/nbextensions/threejs-sage/r122/three.min.js"></script>
-  <script>
-    if ( !window.THREE ) document.write(' \
-  <script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@r122/build/three.min.js"><\/script> \
-              ');
-  </script>
 
 <!--  Navbar  -->
 <nav class="navbar dark-grey">
-  <a class="caltech-logo" href="https://www.caltech.edu/" target="_blank"><img class="logo" src="static/Caltech_LOGO-Orange_RGB.png"></a>
+  <a class="caltech-logo" href="https://www.caltech.edu/" target="_blank"><img class="logo" src="pics/png/Caltech_LOGO-Orange_RGB.png"></a>
   <a class="bar-button" href="gallery.html">Gallery</a>
   <a class="bar-button" href="teaching.html">Teaching</a>
   <a class="active bar-button" href="research.html">Research</a>
@@ -29,20 +23,47 @@
 <div class="main">
   <!-- Overview -->
   <h2 class="text-grey" style="padding-top: 36px;">Overview</h2>
-  <p>My current research focuses on applications of AI/ML in mathematics and physics. 
-    I work on deep-learning numerical invariants of Calabi–Yau geometries, which play an important role in algebraic geometry and string theory.
+  <p>
+    My current research focuses on applications of AI/ML in mathematics and physics.
   </p>
+  <hr>
+    <!-- Projects -->
+  <h2 class="text-grey" style="padding-top: 12px;">Projects</h2>
   
-  <div id="myContainer">
-    <div id="myAnimation">
-      <script src="js/polytope.js"></script>
+  <div id ="needtowrap">
+    <p>
+      Calabi--Yau manifolds play an important role in mathematics and physics. String theory in flat ten-dimensional Minkowski space can be compactified on various CY geometries. The case of complex dimension d=3 leads to CY 3-folds and compactifies to the familiar flat four-dimensional spacetime. 
+      The case of d=2 requires the target geometry to be a complex torus or K3 surface. My research is dedicated to a deep understanding of these geometries. 
+      The field has recently seen very promising applications of machine learning to gain further insight into their algebraic and geometric structure as well as numerical invariants.
+    </p>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-2">
+      <h2 class="text-grey">Toric K3 surfaces</h2>
+      
+      <p>
+        String compactification on toric K3 hypersurfaces can be constructed from reflexive 3D lattice polyhedra. A full classification of all 4319 such polyhedra was obtained by Kreuzer--Sharke <a class="hover-text-grey" href="#bib">[KS98]</a>.
+        It was known since the 80's that in this case supersymmetry extends to N=(4,4) due to the hyperkähler metric, which has profound consequences for mirror symmetry. Indeed, Dolgachev's interpretation of mirror symmetry for K3 surfaces through orthogonal Picard lattices <a class="hover-text-grey" href="#bib">[Dol96]</a> does not match Batyrev's mirror construction for toric hypersurfaces <a class="hover-text-grey" href="#bib">[Bat94]</a> in the presence of toric correction terms. 
+        Instead, a computer assisted proof for pairs of dual reflexive polyhedra was given by Rohsiepe <a class="hover-text-grey" href="#bib">[Roh04]</a>, replacing the Picard lattice by a suitably chosen sublattice.
+      </p>
+      <p>
+        In this project, we take a novel AI assisted approach to explain mirror symmetry for K3 surfaces. This process requires two steps. Firstly, we design a neural network optimized for permutation invariant geometric input data such as 3D polyhedra. This network is inspired by the PointNet architecture <a class="hover-text-grey" href="#bib">[QSMG17]</a> for 3D point cloud classification.
+        Our network consists of three key modules: (1) T-Net, (2) Encoder, (3) Decoder. Secondly, we feed geometric 3D data to our network. As a result, we are able to deep learn Picard numbers of toric K3 surfaces with high accuracy. Mirror symmetry requires a matching of sublattices of Picard groups corresponding to dual polyhedra. For this, we train our network on more refined data in order to learn all cyclic factors and obtain the desired matching.
+      </p>
+    </div>
+    <div class="col-2">
+      <figure>
+        <iframe class="polygon" src="pics/three/p1.html" frameborder="0"></iframe>
+        <iframe class="polygon" src="pics/three/q1.html" frameborder="0"></iframe>
+        <figcaption>Lattice polyhedron (<span class="orange-dot"></span>) and its dual (<span class="green-dot"></span>). Use cursor for 3D animation.</figcaption>
+      </figure>
     </div>
   </div>
-  
-
+  <hr>
   <!--  Paper -->
   <h2 class="text-grey">Paper</h2>
-    <hr>
+    
     <ul class="ulst">
        <li><a class="hover-text-grey" target="_blank" href="paper/weyl.pdf">Weyl symmetry for curve counting invariants via spherical twists</a> (joint with <a class="hover-text-grey" target="_blank" href="https://people.math.ethz.ch/~mimoreira/">M. Moreira</a>), <a class="hover-text-grey" href="https://arxiv.org/pdf/2108.06751.pdf" target="_blank">arXiv:2108.06751</a></li>
 
@@ -54,6 +75,30 @@
         <li><a class="hover-text-grey" target="_blank" href="paper/phd.pdf">Symmetry and enumerative geometry of Calabi&ndash;Yau spaces</a> (PhD thesis), <a class="hover-text-grey" href="https://doi.org/10.3929/ethz-b-000550832" target="_blank">doi:10.3929/ethz-b-000550832</a></li>
         <li><a class="hover-text-grey" target="_blank" href="paper/ma.pdf">Motives of hyperkähler varieties and special cubic fourfolds</a> (MSc thesis)</li>
         <li><a class="hover-text-grey" target="_blank" href="paper/ba.pdf">Fulton’s trace formula for coherent cohomology</a> (BSc thesis)</li>
+    </ul>
+  <hr>
+  <!--  Bibliography -->
+  <h2 class="text-grey" id="bib">Bibliography</h2>
+    
+    <ul class="ulst">
+      <li>
+        [KS98] M. Kreuzer and H. Skarke, <cite>Classification of Reflexive Polyhedra
+          in Three Dimensions</cite>, Adv. Theor. Math. Phys. 2, 847–864 (1998),
+hep-th/9805190.
+      </li>
+      <li>
+        [Dol96] I. V. Dolgachev, <cite>Mirror symmetry for lattice polarized K3 surfaces</cite>,
+J. Math. Sci. 81, 2599–2630 (1996), alg-geom/9502005
+      </li>
+      <li>[Bat94] V. V. Batyrev, <cite>Dual Polyhedra and Mirror Symmetry for Calabi--Yau Hypersurfaces in Toric Varieties</cite>, J. Alg. Geom. 3, 493–535 (1994),
+        alg-geom/9310003
+      </li>
+      <li>
+        [Roh04] F. Rohsiepe, <cite>Lattice polarized toric K3 surfaces</cite>, https://arxiv.org/pdf/hep-th/0409290.pdf
+      </li>
+      <li>
+        [QSMG17] R. Q. Charles, H. Su, M. Kaichun and L. J. Guibas, <cite>PointNet: Deep Learning on Point Sets for 3D Classification and Segmentation</cite>, 2017 IEEE Conference on Computer Vision and Pattern Recognition (CVPR), Honolulu, HI, USA, 2017, pp. 77-85, doi: 10.1109/CVPR.2017.16.
+      </li>
     </ul>
   </div>
 </body>
