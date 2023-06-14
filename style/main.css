@@ -18,7 +18,7 @@ hr, .tbl tr {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  padding: 0 8px;
+  padding: 0px;
 }
 
 .navbar {
@@ -40,10 +40,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .contact-icon:hover {
   color:#ccc!important;
-}
-
-.top-hr {
-  width:80%;
 }
 
 
@@ -71,22 +67,19 @@ img {
 }
 
 #profile-container {
-  padding: 16px;
-  text-align: center;
-  height: 340px;
+  padding-left: 8px;
+  height: 40vh;
   float:right;
 }
 #profile {
-  position: relative;
   width:100%;
-  z-index: 1;
 }
 
 p, ul li {
   color:#616161!important;
   font-size: 18px;
   line-height: 1.8;
-  padding: 0 8px;
+  padding: 0px;
 }
 /*
 ul {
@@ -146,7 +139,6 @@ ul {
   vertical-align:middle!important;
   text-align:center!important;
   text-decoration: none;
-  padding-left: 8px;
   max-width: 10vw;
   max-width: 5vw!important;
 }
@@ -211,7 +203,7 @@ ul {
 .gallery {
   display: flex;
   flex-wrap: wrap;
-  padding: 0;
+  padding: 0px;
 }
 
 .gallery img{
@@ -227,11 +219,10 @@ ul {
   flex: 25%;
   max-width: 25%;
   padding: 0;
-  padding-left: 6px;
 }
 
 .column img {
-  margin: 5px 0;
+  margin: 2px;
   vertical-align: middle;
   width: 100%;
 }
@@ -240,8 +231,25 @@ ul {
   display: none;
 }
 
+#about {
+  padding-bottom: 16px;
+  border-top: none!important;
+  border-bottom: 1px solid #ccc!important;
+  outline: 0px none;  
+  overflow: hidden;
+}
+
+.hr-responsive {
+  width: 75%;
+}
+
 
 /* Responsive layout - makes a two column-layout instead of four columns */
+@media screen and (max-width:1150px) {
+  .hr-responsive {
+    width: 100%!important;
+  }
+}
 
 @media screen and (max-width:800px) {
   .main {
@@ -277,6 +285,8 @@ ul {
     flex: 100%!important;
     max-width: 100%!important;
   }
+
+  
   
 }
 
