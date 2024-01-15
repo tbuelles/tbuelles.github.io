@@ -9,7 +9,7 @@ body {
 
 .main {
   margin-top: 7vh;
-  padding: 0 10vw;
+  padding: 0 20vw;
 }
 
 hr, .tbl tr {
@@ -23,7 +23,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .navbar {
   border: none!important;
-  padding: 0 10vw;
+  padding: 0 20vw;
   top: 0;
   height:7vh;
   position:fixed;
@@ -46,7 +46,7 @@ h1, h2, h3, h4, h5, h6 {
 .bar-button{
   font-size: min(20px, 3vw);
   border:none!important;
-  display:inline-block;
+  /* display:inline-block; */
   vertical-align:middle;
   overflow:hidden;
   text-decoration:none;
@@ -61,18 +61,39 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0 8px;
 }
 
+.outer-div-social-media {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  /* gap: 0px; */
+}
+
+.outer-div-social-media > div {
+  display: flex;
+}
+
+.social-media {
+  display: inline-block; /* or 'inline' depending on your design */
+  margin-right: 2px;
+}
+
+
 img {
   max-height: 100%;
   max-width: 100%;
 }
 
 #profile-container {
+  height: 25vw !important;
+  width: 25vw !important;
+  padding-top: 36px;;
   padding-left: 8px;
-  height: 40vh;
-  float:right;
+  /* height: 20vh; */
+  float:right !important;
 }
+
 #profile {
-  width:100%;
+  float: right !important;
 }
 
 p, ul li {
@@ -139,8 +160,6 @@ ul {
   vertical-align:middle!important;
   text-align:center!important;
   text-decoration: none;
-  max-width: 10vw;
-  max-width: 5vw!important;
 }
 
 .logo {
@@ -148,8 +167,8 @@ ul {
   overflow:hidden;
   padding-right: 4px;
   padding-bottom: 4px;
-  max-height: 50%;
-  max-width: 7vw;
+  max-height: 80%;
+  width: 8vw!important;
 }
 
 .gray-scale {
@@ -227,6 +246,10 @@ ul {
   width: 100%;
 }
 
+#header {
+  text-align:center!important;
+  padding-top:2em;
+}
 #pic-one {
   display: none;
 }
@@ -253,22 +276,33 @@ ul {
 
 @media screen and (max-width:800px) {
   .main {
-    padding: 0 3vw!important;
+    padding: 0 6vw!important;
   }
   .navbar {
-    padding-left: 3vw!important;
-    padding-right: 0!important;
+    padding-left: 6vw!important;
+    padding-right: 6vw!important;
 
   }
   .bar-button {
     max-width: 15vw!important;
   }
+  .logo {
+    vertical-align:middle;
+    overflow:hidden;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    max-height: 80%;
+    width: 12vw!important;
+  }
   
   #profile-container {
     margin:auto!important;
-    height: 60vw!important;
-    max-width: 45vw!important;
+    height: 50vw!important;
+    width: 50vw!important;
     float:none!important;
+  }
+  #profile {
+    float: center!important;
   }
   #top-hr {
     width: 100%!important;
