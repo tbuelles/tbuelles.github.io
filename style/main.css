@@ -266,6 +266,18 @@ ul {
   width: 75%;
 }
 
+.profile-photo {
+  float: right;
+  margin-left: 20px; /* Space between the photo and the text */
+  width: 300px; /* Adjust as needed */
+  height: 300px; /* Adjust as needed */
+}
+
+.about-text {
+  text-align: justify;
+}
+
+
 
 /* Responsive layout - makes a two column-layout instead of four columns */
 @media screen and (max-width:1150px) {
@@ -297,8 +309,8 @@ ul {
   
   #profile-container {
     margin:auto!important;
-    height: 50vw!important;
-    width: 50vw!important;
+    height: 70vw!important;
+    width: 70vw!important;
     float:none!important;
   }
   #profile {
