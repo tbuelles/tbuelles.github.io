@@ -132,7 +132,21 @@ ul {
   margin-bottom: 32px;
 }
 
-.tbl td, .tbl th {line-height: 2em;overflow:auto;padding:12px 8px;display:table-cell;text-align:left;vertical-align:top}
+.tbl td:first-child{
+  min-width: 150px; /* Adjust this value based on your content and layout needs */
+  white-space: nowrap;
+}
+.tbl td:nth-child(2) {
+  min-width: 150px; /* Adjust this value based on your content and layout needs */
+  /* white-space: nowrap; */
+}
+.tbl td, .tbl th {
+  line-height: 2em;
+  overflow:auto;
+  padding:12px 8px;
+  /* display:table-cell; */
+  text-align:left;
+  vertical-align:top}
 .tbl tr:first-child, .tbl tr:last-child {
   border-bottom: none!important;
 }
@@ -269,11 +283,14 @@ ul {
 .profile-photo {
   float: right;
   margin-left: 20px; /* Space between the photo and the text */
-  width: 300px; /* Adjust as needed */
-  height: 300px; /* Adjust as needed */
+  width: 250px; /* Adjust as needed */
+  height: 250px; /* Adjust as needed */
 }
 
 .about-text {
+  padding-bottom: 16px;
+  border-top: none!important;
+  border-bottom: 1px solid #ccc!important;
   text-align: justify;
 }
 
@@ -306,15 +323,12 @@ ul {
     max-height: 80%;
     width: 12vw!important;
   }
-  
-  #profile-container {
-    margin:auto!important;
-    height: 70vw!important;
-    width: 70vw!important;
-    float:none!important;
-  }
-  #profile {
-    float: center!important;
+  .profile-photo {
+    float: none;
+    display: block;
+    margin: 0 auto; /* Center the photo and add space below */
+    width: 50%; /* Adjust as needed */
+    height: 50%; /* Adjust as needed */
   }
   #top-hr {
     width: 100%!important;
@@ -326,14 +340,10 @@ ul {
     flex: 50%;
     max-width: 50%;
   }
-
   .col-2 {
     flex: 100%!important;
     max-width: 100%!important;
   }
-
-  
-  
 }
 
 /* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
@@ -342,7 +352,6 @@ ul {
     flex: 100%;
     max-width: 100%;
   }
-
   #pic-one {
     display: block;
   }
