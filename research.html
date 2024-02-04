@@ -22,17 +22,29 @@
 
 <div class="main">
   <!-- Overview -->
-  <h2 class="text-grey" style="padding-top: 36px;">Overview</h2>
+  <h2 class="text-grey" style="padding-top: 36px;">Generative modeling</h2>
   <p>
-    I work on geometric deep learning, specifically focusing on symmetry and invariance to inform inductive bias and neural network architectures adapted to non-Euclidean data. By leveraging the inherent geometric structure of data, such as graphs or point clouds, I aim to develop models that can effectively exploit symmetries and spatial relationships. This approach enables the network to learn from geometric transformations and capture essential features for various tasks, such as 3D object recognition. 
-    One of the emerging applications of machine learning in mathematics and physics in recent years has been in the study of string theory. This field is famously known for its abundance of symmetry which necessitates specific network design.
+    I'm interested in geometric deep learning methods for generative and probabilistic modeling. Geometric deep learning is a new field which focuses on symmetry and invariance to inform inductive bias and neural network architectures for non-Euclidean data.
+    A typical example of such data are graphs equipped with node and edge features represented in Lie groups, which allows to leverage their rich structure and symmetries (Lie algebra, fundamental group, representation theory, etc.).
+  </p>
+  <p>
+    The goal of generative and probabilistic modeling is to create models that can generate new data samples similar to observed data, and to quantify uncertainty in predictions or inferences about unseen data.
+    These models are trained to learn probabiliy paths interpolating between prior and data distribution using pre-defined dynamics through stochastic differential equations (SDEs).
+    Incorporating randomness directly into the dynamics allows the model to capture the inherent variability and uncertainty and to predict a range of possible outcomes, rather than a single deterministic forecast, offering a more nuanced understanding of complex systems.
+  </p>
+  <p>
+    Geometric deep learning and generative modeling are combined in protein engineering and biomolecular design by leveraging the spatial structures of molecules to inform the creation of new proteins with desired functions.
+    These methods use the sequential 1D data of proteins, as well as the geometric properties of their 3D shapes and folding patterns to train deep neural networks.
+    At inference time, these generative models then predict new molecular structures that could achieve specific biological functions, accelerating the discovery of novel proteins and biomolecules with enhanced or new capabilities.
+  </p>
   <hr>
     <!-- String Theory -->
   <h2 class="text-grey" style="padding-top: 12px;">String Theory</h2>
   
   <div>
     <p>
-      Calabi--Yau manifolds play an important role in mathematics and physics. String theory in flat ten-dimensional Minkowski space can be compactified on various CY geometries. The case of complex dimension d=3 leads to CY 3-folds and compactifies to the familiar flat four-dimensional spacetime. 
+      One of the emerging applications of machine learning in mathematics and physics in recent years has been in the study of string theory. This field is famously known for its abundance of symmetry which necessitates specific network design.
+      Among the most important geometries in mathematics and physics are Calabi--Yau manifolds. String theory in flat ten-dimensional Minkowski space can be compactified on various CY geometries. The case of complex dimension d=3 leads to CY 3-folds and compactifies to the familiar flat four-dimensional spacetime. 
       The case of d=2 requires the target geometry to be a complex torus or K3 surface. My research is dedicated to a deep understanding of these geometries. 
       The field has recently seen promising applications of machine learning to gain further insight into their algebraic geometric structures as well as their numerical invariants.
     </p>
@@ -54,9 +66,6 @@
       </p>
       <p>
         In this project, we take a novel AI-assisted approach to explain mirror symmetry for K3 surfaces. We design a neural network optimized for permutation invariant geometric input data such as 3D polyhedra. This network is inspired by the PointNet architecture <a class="hover-text-grey" href="#bib">[QSMG17]</a> for 3D point cloud classification and consists of three key modules: (1) T-Net, (2) Encoder, (3) Decoder. We then train on geometric data derived form 3D lattice polyhedra. As a result, we are able to deep learn Picard numbers of toric K3 surfaces with high accuracy. Mirror symmetry requires a matching of even non-degenerate lattices corresponding to dual polyhedra. For this, we train our network on more refined data in order to learn all cyclic factors and obtain the desired matching.
-      </p>
-      <p>
-        GitHub Repo: <a class="hover-text-grey" target="_blank" href="https://github.com/tbuelles/PicML">https://github.com/tbuelles/PicML</a>
       </p>
       
     </div>
