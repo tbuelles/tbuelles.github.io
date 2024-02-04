@@ -283,8 +283,8 @@ ul {
 .profile-photo {
   float: right;
   margin-left: 20px; /* Space between the photo and the text */
-  width: 250px; /* Adjust as needed */
-  height: 250px; /* Adjust as needed */
+  width: 300px; /* Adjust as needed */
+  height: 300px; /* Adjust as needed */
 }
 
 .about-text {
