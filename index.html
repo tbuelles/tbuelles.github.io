@@ -13,19 +13,21 @@
 </head>
 
 <body>
-	<div class="container">
-		<div class="section profile">
+    <!-- Profile -->
+    <div class="container">
+        <div class="section profile">
             <div class="profile-info">
                 <h1>Tim-Henrik Buelles</h1>
                 <p> thbuelles (at) gmail (dot) com </p>
-                <p>
+                <!-- <p>
                     <a href="https://scholar.google.com/citations?user=cOVOnbUAAAAJ&hl=en"> Google Scholar </a>
                     &nbsp
-                    <a href="https://github.com/tbuelles/"> GitHub </a> </p>
+                    <a href="https://github.com/tbuelles/"> GitHub </a>
+                </p> -->
                 <div id="outer-div-social-media">
                     <div>
-                        <a class="social-media" href="mailto:tbuelles@caltech.edu" target="_blank"><i class="contact-icon fa fa-envelope"></i></a>
-                        <!-- <a class="social-media" href="https://github.com/tbuelles" target="_blank"><i class="contact-icon fa-brands fa-github"></i></a> -->
+                        <a class="social-media" href="mailto:thbuelles@gmail.com" target="_blank"><i class="contact-icon fa fa-envelope"></i></a>
+                        <a class="social-media" href="https://github.com/tbuelles" target="_blank"><i class="contact-icon fa-brands fa-github"></i></a>
                         <a class="social-media" href="https://www.linkedin.com/in/tbuelles/" target="_blank"><i class="contact-icon fa-brands fa-linkedin-in"></i></a>
                         <a class="social-media" href="https://www.strava.com/athletes/49576806" target="_blank"><i class="contact-icon fa-brands fa-strava"></i></a>
                     </div>
@@ -40,49 +42,33 @@
 
         <div class="section">
 
-    		<h2 id="bio">About</h2>
-    		<ul>
+            <h2 id="bio">About</h2>
+            <ul>
                 <li>
-                I'm a research scientist at Pythia Labs. My current research focuses on generative modeling.
+                I'm a research scientist at <a class="hover-text-grey" target="_blank" href="https://www.pythialabs.com/">Pythia Labs</a>. I was trained as a mathematican, now I train neural nets.
+                <br>
+                More technically (less funny), I work on generative and probabilistic modeling of data on structured domains, such as graphs and manifolds.
                 </li>
-
-                <!-- <li>
-                I received my PhD degree in CS at the University of Chicago in 2017. I
-                was very fortunate to be advised by Prof. John Lafferty.
-                <br> <br>
-                During my PhD, I worked in the intersection of machine learning,
-                optimization and statistics.  My research centered around developing
-                novel computationally efficient methods with theoretical guarantees for
-                challenging machine learning problems, with an emphasis on finding exact
-                solutions for nonconvex problems.
-                </li>
-
                 <li>
-                I worked as a postdoc researcher in the Statistics Department, Wharton School,
-                University of Pennsylvania. I worked on differential privacy and statistical inference
-                there.
+                At Pythia Labs, we train such models on large amounts of biomolecular data and deploy them to solve problems in protein design.
                 </li>
-
                 <li>
-                Prior to Penn, I was a research scientist in Facebook from 2017 to 2019.
-                <br> <br>
-                Together with my teammates, I help Facebook build its distributed training system
-                for Ads recommendation models. My work
-                concentrates on distributed optimization algorithms and system
-                architecture design.
+                Previously, I was a postdoctoral researcher at Caltech working with Prof. Graber on geometric deep learning and applications in string theory, see <a class="hover-text-grey" target="_blank" href="./research.html">here</a> for a summary.
                 </li>
-
                 <li>
-                Earlier, I got my master degree in Max Planck Institute for Informatics
-                and my bachelor degree in Zhejiang University.
+                I did my PhD in Mathematics at ETH Zurich in the group of Prof. Pandharipande.
+                My thesis focuses on special symmetries of enumerative invariants derived from Calabi-Yau geometries in superstring theory. 
                 </li>
-    		</ul> -->
+                <li>
+                Before that, I did my BSc and MSc in Mathematics at the University of Bonn where I worked with Prof. Huybrechts on algebraic cycles and motives of K3 surfaces.
+                </li>
+            </ul>
         </div>
 
         <div class="section">
 
-    		<h2 id="publication">Papers</h2>
-    		<!-- <ul>
+            <h2 id="publication">Papers</h2>
+            <!-- <ul>
                 <li>
                     <p>
                         <strong>
@@ -91,171 +77,13 @@
                         Zihan Ding, Amy Zhang, Yuandong Tian, <strong>Qinqing Zheng</strong> <br/>
                         <a class="paper-pub" href= "https://arxiv.org/abs/2402.03570" target="_blank">[paper]</a>
                     </p>
-    			</li>
-
-                <li>
-                    <p>
-                        <strong>
-                           Guided Flows for Generative Modeling and Decision Making
-                        </strong><br/>
-                        <strong>Qinqing Zheng</strong>, Matt Le, Neta Shaul, Yaron Lipman, Aditya Grover, Ricky T. Q. Chen<br/>
-                        <a class="paper-pub" href= "https://arxiv.org/abs/2311.13443" target="_blank">[paper]</a>
-                    </p>
-    			</li>
-
-                <li>
-                    <p>
-                        <strong>
-                            Dual RL: Unification and New Methods for Reinforcement and Imitation Learning
-                        </strong><br/>
-                        <span style="color: #2a7ae2"> ICLR 2024 </span>
-                        <span style="color: #ff5252">(Spotlight)</span> <br/>
-                        Harshit Sikchi, <strong>Qinqing Zheng</strong>, Amy Zhang, Scott Niekum <br/>
-                        <a class="paper-pub" href= "https://arxiv.org/abs/2302.08560" target="_blank">[paper]</a>
-                        <a href="https://github.com/hari-sikchi/DVL">[code]</a>
-                    </p>
-    			</li>
-
-                <li>
-                    <p>
-                        <strong> Semi-Supervised Offline Reinforcement Learning with Action-Free Trajectories </strong><br/>
-                        <strong>Qinqing Zheng</strong>, Mikael Henaff, Brandon Amos, Aditya Grover<br/>
-                        <span style="color: #2a7ae2"> ICML 2023</span> <br/>
-                        <a class="paper-pub" href= "https://arxiv.org/abs/2210.06518" target="_blank">[paper]</a>
-                        <a href="https://github.com/facebookresearch/ssorl">[code]</a>
-                    </p>
-    			</li>
-
-                <li>
-                    <p>
-                        <strong> ConserWeightive Behavioral Cloning for Reliable Offline Reinforcement Learning </strong><br/>
-                        Tung Nguyen, <strong>Qinqing Zheng</strong>, Aditya Grover <br/>
-                        <a class="paper-pub" href= "https://arxiv.org/abs/2210.05158" target="_blank">[paper]</a>
-                        <a href="https://github.com/tung-nd/cwbc">[code]</a>
-                    </p>
-    			</li>
-
-                <li>
-                    <p>
-                        <strong> Latent State Marginalization as a Low-cost Approach for Improving Exploration </strong><br/>
-                        Dinghuai Zhang, Aaron Courville, Yoshua Bengio, <strong>Qinqing
-                            Zheng</strong>, Amy Zhang, Ricky T. Q. Chen<br/>
-                        <span style="color: #2a7ae2"> ICLR 2023</span> <br/>
-                        <a class="paper-pub" href= "https://arxiv.org/abs/2210.00999" target="_blank">[paper]</a>
-                    </p>
-    			</li>
-
-                <li>
-                    <p>
-                        <strong> Online Decision Transformer </strong><br/>
-                        <strong>Qinqing Zheng</strong>, Amy Zhang, Aditya Grover<br/>
-                        <span style="color: #2a7ae2"> ICML 2022</span>
-                        <span style="color: #ff5252">(Long Oral Presentation)</span> <br/>
-                        <a class="paper-pub" href="https://arxiv.org/abs/2202.05607"
-                            target="_blank">[paper]</a>
-                        <a href="https://github.com/facebookresearch/online-dt">[code]</a>
-                        <a href="./odt_icml22.pdf">[poster]</a>
-                    </p>
-    			</li>
-
-                <li>
-                    <p>
-                        <strong> Near-Optimal Confidence Sequences for Bounded Random Variables </strong><br/>
-                        Arun Kumar Kuchibhotla*, <strong>Qinqing Zheng*</strong> (*Equal contribution) <br/>
-                        <span style="color: #2a7ae2"> ICML 2021 </span>
-                        <span style="color: #ff5252">(Spotlight)</span> <br/>
-                        <a class="paper-pub" href="https://arxiv.org/abs/2006.05022"
-                            target="_blank">[paper]</a>
-                        <a href="https://github.com/enosair/bentkus_conf_seq">[code]</a>
-                    </p>
-    			</li>
-
-
-                <li>
-                    <p>
-                        <strong> A Theorem of the Alternative for Personalized Federated Learning </strong></br>
-                        Shuxiao Chen, <strong>Qinqing Zheng</strong>,  Qi Long, Weijie Su<br/>
-                        Submitted. <br/>
-                        <a class="paper-pub" href="https://arxiv.org/abs/2103.01901"
-                            target="_blank">[paper]</a>
-                    </p>
-    			</li>
-
-
-                <li>
-                    <p>
-                        <strong> Federated \(f\)-Differential Privacy </strong></br>
-                        <strong>Qinqing Zheng</strong>, Shuxiao Chen, Qi Long, Weijie Su<br/>
-                        <span style="color: #2a7ae2"> AISTATS 2021 </span> <br/>
-                        <a class="paper-pub" href="https://arxiv.org/abs/2102.11158"
-                            target="_blank">[paper]</a>
-                        <a href="https://github.com/enosair/federated_fdp">[code]</a>
-                    </p>
-    			</li>
-
-
-                <li>
-                    <p>
-                        <strong> Sharp Composition Bounds for Gaussian Differential Privacy via Edgeworth Expansion</strong></br>
-                        <strong>Qinqing Zheng</strong>, Jinshuo Dong, Qi Long, Weijie Su<br/>
-                        <span style="color: #2a7ae2"> ICML 2020 </span> <br/>
-    				    <a class="paper-pub" href="https://arxiv.org/abs/2003.04493"
-                        target="_blank">[paper]</a>
-                        <a href="https://github.com/enosair/gdp-edgeworth">[code]</a>
-                    </p>
-    			</li>
-
-
-                <li>
-                    <p><strong>
-                        ShadowSync: Performing Synchronization in the Background for Highly Scalable Distributed Training
-                    </strong><br/>
-                        <strong>Qinqing Zheng</strong>, Bor-Yiing Su, Jiyan Yang, Alisson Azzolini, Qiang Wu, Ou Jin, Shri Karandikar, Hagay Lupesko, Liang Xiong, Eric Zhou
-                    <br/>
-    				<a class="paper-pub" href="https://arxiv.org/abs/2003.03477"
-                        target="_blank">[paper]</a>
-    			</li>
-
-
-                <li>
-                    <p><strong>
-                        Convergence Analysis for Rectangular Matrix Completion Using Burer-Monteiro Factorization and Gradient Descent
-                    </strong><br/>
-                        <strong>Qinqing Zheng</strong>, John Lafferty
-                    <br/>
-    				<a class="paper-pub" href="https://arxiv.org/abs/1605.07051"
-                        target="_blank">[paper]</a>
-    			</li>
-
-                <li>
-                    <p><strong>
-                        A Convergent Gradient Descent Algorithm for Rank Minimization and Semidefinite Programming from Random Linear Measurements
-                    </strong><br/>
-                        <strong>Qinqing Zheng</strong>, John Lafferty
-                    <br/>
-                    <span style="color: #2a7ae2"> NeurIPS 2015 </span> <br/>
-    				<a class="paper-pub" href="http://arxiv.org/abs/1506.06081"
-                        target="_blank">[paper]</a>
-                    <a href="./sdp_nips15.pdf">[poster]</a>
-    			</li>
-
-                <li>
-                    <p><strong>
-                    Interpolating Convex and Non-Convex Tensor Decompositions via the Subspace Norm
-                    </strong><br/>
-                    <strong> Qinqing Zheng </strong>, Ryota Tomioka <br/>
-                    <span style="color: #2a7ae2"> NeurIPS 2015 </span> <br/>
-    				<a class="paper-pub" href="http://arxiv.org/abs/1503.05479"
-                        target="_blank">[paper]</a>
-                        <a href="https://github.com/enosair/tensor-subspace-norm">[code]</a>
-                        <a href="./tensor_nips15.pdf">[poster]</a>
-    			</li>
-    		</ul> -->
+                </li>
+            </ul> -->
         </div>
 
         <div class="section">
-    		<h2 id="talks">Talks</h2>
-    		<!-- <ul>
+            <h2 id="talks">Talks</h2>
+            <!-- <ul>
                 <li> Princeton University, Nov 2022 </li>
                 <li> UC Berkeley, March 2022 </li>
                 <li> Minisymposium on Non-Convex Optimization for Low Complexity Models:
@@ -267,20 +95,9 @@
                 </li>
             </ul> -->
         </div>
-
-        <div class="section">
-    		<h2 id="reviewer">Review</h2>
-    		<!-- <ul>
-                <li> <b>Conference</b>: ICML, NeurIPS, AISTATS, ICLR </li>
-                <li> <b>Journal</b>: Journal of Machine Learning Research (Editorial Board Reviewer), IEEE Transactions on Signal Processing, Annals of Statistics </li>
-            </ul> -->
-        </div>
-
-
-
         
         <div class="footer"> Last updated Jun 2024 </div>
-       
+        
     </div>
 
 </body>
@@ -298,4 +115,3 @@
 </script>
 
 </html>
-

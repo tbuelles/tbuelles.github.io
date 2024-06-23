@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style/w3.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="style/main.css">
+  <title>Tim-Henrik Buelles</title>
+</head>
+<body>
+  <!-- Overview -->
+  <h2 class="text-grey" style="padding-top: 36px;">Generative modeling</h2>
+    <p>
+      I'm interested in geometric deep learning methods for generative and probabilistic modeling. Geometric deep learning is a new field which focuses on symmetry and invariance to inform inductive bias and neural network architectures for non-Euclidean data.
+      A typical example of such data are graphs equipped with node and edge features represented in Lie groups, which allows to leverage their rich structure and symmetries (Lie algebra, fundamental group, representation theory, etc.).
+    </p>
+    <p>
+      The goal of generative and probabilistic modeling is to create models that can generate new data samples similar to observed data, and to quantify uncertainty in predictions or inferences about unseen data.
+      These models are trained to learn probabiliy paths interpolating between prior and data distribution using pre-defined dynamics through stochastic differential equations (SDEs).
+      Incorporating randomness directly into the dynamics allows the model to capture the inherent variability and uncertainty and to predict a range of possible outcomes, rather than a single deterministic forecast, offering a more nuanced understanding of complex systems.
+    </p>
+    <p>
+      Geometric deep learning and generative modeling are combined in protein engineering and biomolecular design by leveraging the spatial structures of molecules to inform the creation of new proteins with desired functions.
+      These methods use the sequential 1D data of proteins, as well as the geometric properties of their 3D shapes and folding patterns to train deep neural networks.
+      At inference time, these generative models then predict new molecular structures that could achieve specific biological functions, accelerating the discovery of novel proteins and biomolecules with enhanced or new capabilities.
+    </p>
+    <hr>
+    <!-- String Theory -->
+  <h2 class="text-grey" style="padding-top: 12px;">String Theory</h2>
+  <div>
+    <p>
+      One of the emerging applications of machine learning in mathematics and physics in recent years has been in the study of string theory. This field is famously known for its abundance of symmetry which necessitates specific network design.
+      Among the most important geometries in mathematics and physics are Calabi--Yau manifolds. String theory in flat ten-dimensional Minkowski space can be compactified on various CY geometries. The case of complex dimension d=3 leads to CY 3-folds and compactifies to the familiar flat four-dimensional spacetime. 
+      The case of d=2 requires the target geometry to be a complex torus or K3 surface. My research is dedicated to a deep understanding of these geometries. 
+      The field has recently seen promising applications of machine learning to gain further insight into their algebraic geometric structures as well as their numerical invariants.
+    </p>
+  </div>
+  <hr>
+    <div>
+      <div class="polygon-container">
+        <figure style="margin: 0px;">
+          <iframe class="polygon" src="pics/three/p1.html" frameborder="0"></iframe>
+          <iframe class="polygon" src="pics/three/q1.html" frameborder="0"></iframe>
+          <figcaption style="text-align: center;">Lattice polyhedron (<span class="orange-dot"></span>) and its dual (<span class="green-dot"></span>). Use cursor for 3D animation.</figcaption>
+        </figure>
+      </div>
+      <h2 class="text-grey">Toric K3 surfaces</h2>
+      <p>
+        String compactification on toric K3 hypersurfaces can be constructed from reflexive 3D lattice polyhedra. A full classification of all 4319 such polyhedra was obtained by Kreuzer--Sharke <a class="hover-text-grey" href="#bib">[KS98]</a>.
+        It was known since the 80's that in this case supersymmetry extends to <nobr>N=(4,4)</nobr> due to the hyperkähler metric, which has profound consequences for mirror symmetry. Indeed, Dolgachev's interpretation of mirror symmetry for K3 surfaces through orthogonal Picard lattices <a class="hover-text-grey" href="#bib">[Dol96]</a> does not match Batyrev's mirror construction for toric hypersurfaces <a class="hover-text-grey" href="#bib">[Bat94]</a> in the presence of toric correction terms. 
+        Instead, a computer-assisted proof for pairs of dual reflexive polyhedra was given by Rohsiepe <a class="hover-text-grey" href="#bib">[Roh04]</a>, replacing the Picard lattice by a suitably chosen sublattice.
+      </p>
+      <p>
+        In this project, we take a novel AI-assisted approach to explain mirror symmetry for K3 surfaces. We design a neural network optimized for permutation invariant geometric input data such as 3D polyhedra. This network is inspired by the PointNet architecture <a class="hover-text-grey" href="#bib">[QSMG17]</a> for 3D point cloud classification and consists of three key modules: (1) T-Net, (2) Encoder, (3) Decoder. We then train on geometric data derived form 3D lattice polyhedra. As a result, we are able to deep learn Picard numbers of toric K3 surfaces with high accuracy. Mirror symmetry requires a matching of even non-degenerate lattices corresponding to dual polyhedra. For this, we train our network on more refined data in order to learn all cyclic factors and obtain the desired matching.
+      </p>
+      
+    </div>
+  <hr>
+  <!--  Paper -->
+  <h2 class="text-grey">Paper</h2>
+    
+    <ul class="ulst">
+       <li><a class="hover-text-grey" target="_blank" href="paper/weyl.pdf">Weyl symmetry for curve counting invariants via spherical twists</a> (joint with <a class="hover-text-grey" target="_blank" href="https://people.math.ethz.ch/~mimoreira/">M. Moreira</a>), <i>Journal of Algebraic Geometry</i>, <b>829</b>, (2024), <a class="hover-text-grey" href="https://www.ams.org/journals/jag/0000-000-00/S1056-3911-2024-00829-5/" target="_blank">doi:10.1090/jag/829</a></li>
+        <li><a class="hover-text-grey" target="_blank" href="paper/div2.pdf">Curves on K3 surfaces in divisibility two</a> (joint with <a class="hover-text-grey" target="_blank" href="https://people.math.ethz.ch/~baeyo/">Y. Bae</a>), <i>Forum of mathematics, Sigma</i>, <b>9</b>, e9 (2021), <a class="hover-text-grey" href="https://www.cambridge.org/core/journals/forum-of-mathematics-sigma/article/curves-on-k3-surfaces-in-divisibility-2/59A2076AAC8FA26E7AD2912071BDA524" target="_blank">doi:10.1017/fms.2021.6</a></li>
+        <li><a class="hover-text-grey" target="_blank" href="paper/gwclasses.pdf">Gromov&ndash;Witten classes of K3 surfaces</a>, 	<a class="hover-text-grey" href="https://arxiv.org/pdf/1912.00389.pdf" target="_blank">arXiv:1912.00389</a></li>
+        <li><a class="hover-text-grey" target="_blank" href="paper/motives.pdf">Motives of moduli spaces on K3 surfaces and of special cubic fourfolds</a>, <i>manuscripta math</i>, <b>161</b>, 109–124 (2020), <a class="hover-text-grey" href="https://link.springer.com/article/10.1007/s00229-018-1086-0" target="_blank">doi:10.1007/s00229-018-1086-0</a></li>
+        <li><a class="hover-text-grey" target="_blank" href="paper/phd.pdf">Symmetry and enumerative geometry of Calabi&ndash;Yau spaces</a> (PhD thesis), <a class="hover-text-grey" href="https://doi.org/10.3929/ethz-b-000550832" target="_blank">doi:10.3929/ethz-b-000550832</a></li>
+        <li><a class="hover-text-grey" target="_blank" href="paper/ma.pdf">Motives of hyperkähler varieties and special cubic fourfolds</a> (MSc thesis)</li>
+        <li><a class="hover-text-grey" target="_blank" href="paper/ba.pdf">Fulton’s trace formula for coherent cohomology</a> (BSc thesis)</li>
+    </ul>
+  <hr>
+  <!--  Bibliography -->
+  <h2 class="text-grey" id="bib">Bibliography</h2>
+    
+    <ul class="ulst">
+      <li>
+        [KS98] M. Kreuzer and H. Skarke, <cite>Classification of Reflexive Polyhedra
+          in Three Dimensions</cite>, Adv. Theor. Math. Phys. 2, 847–864 (1998),
+hep-th/9805190.
+      </li>
+      <li>
+        [Dol96] I. V. Dolgachev, <cite>Mirror symmetry for lattice polarized K3 surfaces</cite>,
+J. Math. Sci. 81, 2599–2630 (1996), alg-geom/9502005
+      </li>
+      <li>[Bat94] V. V. Batyrev, <cite>Dual Polyhedra and Mirror Symmetry for Calabi--Yau Hypersurfaces in Toric Varieties</cite>, J. Alg. Geom. 3, 493–535 (1994),
+        alg-geom/9310003
+      </li>
+      <li>
+        [Roh04] F. Rohsiepe, <cite>Lattice polarized toric K3 surfaces</cite>, https://arxiv.org/pdf/hep-th/0409290.pdf
+      </li>
+      <li>
+        [QSMG17] R. Q. Charles, H. Su, M. Kaichun and L. J. Guibas, <cite>PointNet: Deep Learning on Point Sets for 3D Classification and Segmentation</cite>, 2017 IEEE Conference on Computer Vision and Pattern Recognition (CVPR), Honolulu, HI, USA, 2017, pp. 77-85, doi: 10.1109/CVPR.2017.16.
+      </li>
+    </ul>
+</body>
+</html>
