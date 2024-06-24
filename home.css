@@ -162,8 +162,14 @@ li {
 .profile-info {
 	width: 40%;
 	vertical-align: middle;
+	/* Center the content */
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
 }
-
+	
 .profile-dpt {
 	/*font-weight: 700;*/
 	font-size: 18px;
