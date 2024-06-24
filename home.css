@@ -126,6 +126,7 @@ li {
 }
 
 .footer {
+	margin-bottom: 10px;
 	font-size: 12px;
 	font-size: 1.2rem;
 	text-align: center;
@@ -194,6 +195,63 @@ li {
 
 .course-name {
 	font-weight: 700;
+}
+
+/* Research */
+
+.orange-dot {
+	height: 10px;
+	width: 10px;
+	background-color: #FF6C0C;
+	border-radius: 50%;
+	display: inline-block;
+}
+  
+.green-dot {
+height: 10px;
+width: 10px;
+background-color: #73A950;
+border-radius: 50%;
+display: inline-block;
+}
+
+/* Teaching */
+
+.tbl td{
+    display: block!important;
+}
+
+.tbl tr {
+border-top: none!important;
+border-bottom: 1px solid #ccc!important;
+}
+
+.tbl{
+	border-collapse: collapse;
+	border-spacing:0;
+	width:100%!important;
+	display:table;
+	font-size: 16px;
+	margin-bottom: 32px;
+}
+
+.tbl td:first-child{
+	min-width: 100px; /* Adjust this value based on your content and layout needs */
+	white-space: nowrap;
+}
+.tbl td:nth-child(2) {
+	min-width: 150px; /* Adjust this value based on your content and layout needs */
+	/* white-space: nowrap; */
+}
+.tbl td, .tbl th {
+	line-height: 2em;
+	overflow:auto;
+	padding:12px 8px;
+	/* display:table-cell; */
+	text-align:left;
+	vertical-align:top}
+	.tbl tr:first-child, .tbl tr:last-child {
+	border-bottom: none!important;
 }
 
 @media screen and (max-width: 767px) {
