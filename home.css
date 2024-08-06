@@ -84,6 +84,18 @@ li {
 
 /*specify content style*/
 
+.link-bold {
+    text-decoration: none;
+    color: #777; /* Darker color than #555 */
+    font-weight: bold; /* Make the link text bold */
+    transition: color 0.3s, text-decoration 0.3s;
+}
+
+.link-bold:hover {
+    color: #555; /* Even darker for hover effect */
+    text-decoration: underline;
+}
+
 
 .hover-text-grey:hover {
 	color:#757575!important
