@@ -52,42 +52,25 @@
         The functions \(g_i\) are commonly used for positional encodings \(g_i(y) = e^{2\pi i \gamma} y\) or normalization \(g_i(y) = \frac{y - \bar \mu}{\bar \sigma}\).
       </p>
 
-      <h2>Minimal GPU kernel</h2>
+      <h2>GPU kernel</h2>
 
       <p>
-        Below is a simple CUDA kernel that computes attention entropy for each head in
-        a batch. This is not optimized, but it’s clear and fast enough for monitoring:
-      </p>
-
-      <pre><code class="language-cpp">
-extern "C" __global__
-void attention_entropy(const float* __restrict__ attn,
-                       float* __restrict__ out,
-                       int B, int H, int T) {
-    int b = blockIdx.x;
-    int h = threadIdx.x;
-    if (b >= B || h >= H) return;
-
-    const float* row = attn + (b * H + h) * T;
-    float entropy = 0.0f;
-
-    for (int i = 0; i < T; i++) {
-        float p = row[i];
-        if (p > 0.0f) entropy -= p * logf(p);
-    }
-    out[b * H + h] = entropy;
-}
-</code></pre>
-
-      <h2>Full example</h2>
-
-      <p>
-        A complete PyTorch extension (including bindings and a minimal training
-        integration) is available here:
-        <a class="link-bold" target="_blank" href="https://github.com/YOUR_USERNAME/YOUR_REPO">
+        Attention is computed with "flash attention" which is tiling and online-softmax, see .
+        Any such implementation can be extended to compute entropy within the same kernel. This adds near zero overhead. It is particularly simple because it only touches the forward kernel.
+        Below is an example using Triton, see         <a class="link-bold" target="_blank" href="https://github.com/YOUR_USERNAME/YOUR_REPO">
           GitHub — Attention Entropy Monitor
-        </a>.
+        </a> for full code and usage.
       </p>
+
+      <pre><code class="language-python">
+        @triton.jit
+        def attention_entropy_kernel(
+            Q, K, S,  # input queries, keys, output entropies
+            M, N, H,  # sizes: M=query length, N=key length, H=num heads
+            BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr
+        ):
+            head_id = tl.program_id(0)    # which head are we processing
+</code></pre>
 
     </div>
 
