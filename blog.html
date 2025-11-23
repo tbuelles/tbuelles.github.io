@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Blog — Tim-Henrik Buelles</title>
+  <meta name="author" content="Tim-Henrik Buelles" />
+  <meta name="viewport" content="width=device-width; initial-scale=1.0" />
+  <link rel="stylesheet" type="text/css" href="home.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Header / back link -->
+    <div class="section profile" style="align-items:center; position:relative;">
+      <a class="link-bold back-left" href="./index.html" aria-label="Back to home"><i class="fa fa-arrow-left"></i> Back to home</a>
+      <div class="profile-info">
+        <h1>technical stuff</h1>
+        <!-- <p class="muted">how not to get bored in industry</p> -->
+      </div>
+    </div>
+
+    <!-- Intro -->
+    <div class="section">
+      <p>
+        work as a researcher in industry. mostly, how not to get bored. opinions are my own. highly biased, but explicitly the strongest bias is my identity as a mathematician.
+      </p>
+    </div>
+
+    <!-- Posts list -->
+    <div class="section posts-list">
+
+      <!-- Example post 1 -->
+      <article class="post-summary">
+        <h2 class="post-title"><a href="posts/2025-11-23-attention-entropy.html">Attention Entropy</a></h2>
+        <div class="post-meta">October 12, 2025</div>
+        <p class="post-abstract">
+            Attention entropy collapse is a known problem in ML, but often often ignored or patched in some way. I discuss common patterns of failure and how to compute and monitor entropy on-the-fly with a simple gpu kernel.
+        </p>
+      </article>
+
+      <!-- Add new posts by copying this template -->
+      <!--
+      <article class="post-summary">
+        <h2 class="post-title"><a href="posts/YYYY-MM-DD-slug.html">Post Title</a></h2>
+        <div class="post-meta">Month DD, YYYY</div>
+        <p class="post-abstract">Short one-paragraph abstract or teaser for the post (1–2 sentences).</p>
+      </article>
+      -->
+
+    </div>
+
+    <!-- Pagination placeholder (simple) -->
+    <!-- <div class="section"> -->
+      <!-- If you have many posts you can add simple pagination links here -->
+      <!-- <nav class="pagination"><a href="#prev">« Older</a> | <a href="#next">Newer »</a></nav> -->
+    <!-- </div> -->
+
+    <div class="footer"> Last updated Nov 23, 2025 </div>
+
+  </div>
+
+  <style>
+    /* Small page-specific helpers (keeps everything in one file if you prefer) */
+    /* If you already have styles for .section, .container in home.css these are just gentle overrides. */
+    .posts-list { display: block; margin-top: 6px; }
+    .post-summary { padding: 1.0rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+    .post-title { margin: 0 0 0.25rem 0; font-family: "Noto Serif", serif; font-weight: 700; font-size: 1.1rem; }
+    .post-title a { text-decoration: none; color: inherit; }
+    .post-title a:hover { text-decoration: underline; }
+    .post-meta { color: #666; font-size: 0.9rem; margin-bottom: 0.35rem; font-family: "Open Sans", sans-serif; }
+    .post-abstract { margin: 0 0 0.5rem 0; line-height: 1.5; color: #222; }
+    .muted { color: #666; margin-top: 0.25rem; }
+    .pagination a { text-decoration: none; color: inherit; padding: 0.25rem 0.5rem; }
+    /* Position the back link in the top-left without changing flow */
+    .section.profile { position: relative; }
+    .back-left { position: absolute; left: 0.5rem; top: 0.5rem; text-decoration: none; color: inherit; }
+    .back-left i { margin-right: 0.35rem; }
+  </style>
+
+</body>
+</html>

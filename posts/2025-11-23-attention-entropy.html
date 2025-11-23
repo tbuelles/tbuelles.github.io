@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Attention Entropy Collapse — Tim-Henrik Buelles</title>
+  <meta name="author" content="Tim-Henrik Buelles" />
+  <meta name="viewport" content="width=device-width; initial-scale=1.0" />
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  <link rel="stylesheet" type="text/css" href="../home.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="section profile" style="align-items:center; position:relative;">
+      <a class="link-bold back-left" href="../blog.html" aria-label="Back to blog">
+        <i class="fa fa-arrow-left"></i> Back
+      </a>
+      <div class="profile-info">
+        <h1>Attention Entropy Collapse</h1>
+        <div class="post-meta" style="text-align:center; color:#666;">October 12, 2025</div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="section">
+      <h3>Intro</h3>
+      <p>
+        Attention entropy collapse is a failure mode in ML where attention logits become nearly one-hot, concentrating all probability mass on a single position.
+        In practice, this is often patched with Layernorm / RMSNorm. I don't think this is the right long-term approach.
+      </p>
+
+      <h3>Entropy</h3>
+      <p>
+        Consider data \(x=(x_1, \ldots, x_n)\) from \(p(x)\). Recall entropy  \(-\mathbb{E}_{x \sim p}[\log p(x)]\).
+        It is maximized by uniform distributions, and collapses to zero for delta distributions.
+        Entropy is the Jensen gap between cross-entropy \(-\mathbb{E}_{x \sim p}[\log f(x)] \geq H(p)\) and KL divergence \(D_{KL}(p || f)\) for any model \(f\).
+
+      <h3>Model</h3>
+      <p>
+        Let \(f_\theta\) be a parametric model for the \(n\) conditional distributions \(p(x_i | \bar x_i)\) where \(\bar x_i\) is the context \(x=(x_1, \ldots, \emptyset, \ldots, x_n)\).
+        In ML, this is the typical subproblem of modeling \(p(x)\). Consider the simple attention model
+        \begin{align*}
+        q_i = g_i\left(W_q x_i\right)\,, \quad k_j &= g_j\left(W_k x_j\right), \quad v_j = W_v x_j \\[1em]
+        \alpha_{ij} &= \frac{\exp(q_i \cdot k_j)}{\sum_{l=1}^n \exp(q_i \cdot k_l)} \\[1em]
+        f_\theta(x)_i &= \sum_{j=1}^n \alpha_{ij} v_j
+        \end{align*}
+
+        The functions \(g_i\) are commonly used for positional encodings \(g_i(y) = e^{2\pi i \gamma} y\) or normalization \(g_i(y) = \frac{y - \bar \mu}{\bar \sigma}\).
+      </p>
+
+      <h2>Minimal GPU kernel</h2>
+
+      <p>
+        Below is a simple CUDA kernel that computes attention entropy for each head in
+        a batch. This is not optimized, but it’s clear and fast enough for monitoring:
+      </p>
+
+      <pre><code class="language-cpp">
+extern "C" __global__
+void attention_entropy(const float* __restrict__ attn,
+                       float* __restrict__ out,
+                       int B, int H, int T) {
+    int b = blockIdx.x;
+    int h = threadIdx.x;
+    if (b >= B || h >= H) return;
+
+    const float* row = attn + (b * H + h) * T;
+    float entropy = 0.0f;
+
+    for (int i = 0; i < T; i++) {
+        float p = row[i];
+        if (p > 0.0f) entropy -= p * logf(p);
+    }
+    out[b * H + h] = entropy;
+}
+</code></pre>
+
+      <h2>Full example</h2>
+
+      <p>
+        A complete PyTorch extension (including bindings and a minimal training
+        integration) is available here:
+        <a class="link-bold" target="_blank" href="https://github.com/YOUR_USERNAME/YOUR_REPO">
+          GitHub — Attention Entropy Monitor
+        </a>.
+      </p>
+
+    </div>
+
+    <div class="footer"> Last updated Oct 12, 2025 </div>
+
+  </div>
+
+  <style>
+    .back-left {
+      position: absolute;
+      left: 0.5rem;
+      top: 0.5rem;
+      text-decoration: none;
+      color: inherit;
+    }
+    .back-left i { margin-right: 0.35rem; }
+    pre {
+      padding: 1rem;
+      background: #f5f5f5;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 0.95rem;
+    }
+    code { font-family: Menlo, monospace; }
+  </style>
+
+</body>
+</html>
