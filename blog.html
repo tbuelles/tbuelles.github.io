@@ -14,18 +14,19 @@
   <div class="container">
 
     <!-- Header / back link -->
-    <div class="section profile" style="align-items:center; position:relative;">
-      <a class="link-bold back-left" href="./index.html" aria-label="Back to home"><i class="fa fa-arrow-left"></i> Back to home</a>
-      <div class="profile-info">
-        <h1>technical stuff</h1>
-        <!-- <p class="muted">how not to get bored in industry</p> -->
+    <header class="site-header">
+      <a class="link-bold back-left" href="./index.html" aria-label="Home"><i class="fa fa-arrow-left"></i>Home</a>
+
+      <div class="title-wrap">
+        <h1>Technical Stuff</h1>
+        <!-- <div class="post-meta">November 23, 2025</div> -->
       </div>
-    </div>
+    </header>
 
     <!-- Intro -->
     <div class="section">
       <p>
-        work as a researcher in industry. mostly, how not to get bored. opinions are my own. highly biased, but explicitly the strongest bias is my identity as a mathematician.
+        Experiences and thoughts on research and technical topics. Work as a mathematician in industry, and, how not to get bored. Opinions are my own.
       </p>
     </div>
 
@@ -37,26 +38,12 @@
         <h2 class="post-title"><a href="posts/2025-11-23-attention-entropy.html">Attention Entropy</a></h2>
         <div class="post-meta">October 12, 2025</div>
         <p class="post-abstract">
-            Attention entropy collapse is a known problem in ML, but often often ignored or patched in some way. I discuss common patterns of failure and how to compute and monitor entropy on-the-fly with a simple gpu kernel.
-        </p>
-      </article>
+        Attention entropy collapse is a failure mode in ML where attention logits converge to a small number of states, thus losing the ability to model the distribution.
+        I give an overview of common problems and how to compute and monitor entropy on-the-fly with a simple GPU kernel.
 
-      <!-- Add new posts by copying this template -->
-      <!--
-      <article class="post-summary">
-        <h2 class="post-title"><a href="posts/YYYY-MM-DD-slug.html">Post Title</a></h2>
-        <div class="post-meta">Month DD, YYYY</div>
-        <p class="post-abstract">Short one-paragraph abstract or teaser for the post (1–2 sentences).</p>
       </article>
-      -->
 
     </div>
-
-    <!-- Pagination placeholder (simple) -->
-    <!-- <div class="section"> -->
-      <!-- If you have many posts you can add simple pagination links here -->
-      <!-- <nav class="pagination"><a href="#prev">« Older</a> | <a href="#next">Newer »</a></nav> -->
-    <!-- </div> -->
 
     <div class="footer"> Last updated Nov 23, 2025 </div>
 
@@ -76,8 +63,6 @@
     .pagination a { text-decoration: none; color: inherit; padding: 0.25rem 0.5rem; }
     /* Position the back link in the top-left without changing flow */
     .section.profile { position: relative; }
-    .back-left { position: absolute; left: 0.5rem; top: 0.5rem; text-decoration: none; color: inherit; }
-    .back-left i { margin-right: 0.35rem; }
   </style>
 
 </body>
