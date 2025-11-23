@@ -131,7 +131,8 @@ code {
 .site-header {
   position: relative;
   text-align: center;
-  padding: 5rem 0rem 0em 0em;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 5rem 0rem 2em 0em;
 }
 
 .site-header .back-left {
