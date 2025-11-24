@@ -101,9 +101,11 @@
         <pre><code id="kernel" class="language-python">
 @triton.jit
 def _attn_fwd(sm_scale, M,
-    ENTROPY,  # NEW
+    # -->
     Z, H, desc_q, desc_k, desc_v, desc_o, N_CTX,
-    COMPUTE_ENTROPY: tl.constexpr, # NEW
+    ENTROPY,
+    COMPUTE_ENTROPY: tl.constexpr,
+    # <--
     HEAD_DIM: tl.constexpr,
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
@@ -122,22 +124,22 @@ def _attn_fwd(sm_scale, M,
     m_i = tl.zeros([BLOCK_M], dtype=tl.float32) - float("inf")
     l_i = tl.zeros([BLOCK_M], dtype=tl.float32) + 1.0
     acc = tl.zeros([BLOCK_M, HEAD_DIM], dtype=tl.float32)
-    ### New
+    # -->
     if COMPUTE_ENTROPY:
         r_i = tl.zeros([BLOCK_M], dtype=tl.float32)
-    ###
+    # <--
     ...
-
     # epilogue
     m_i += tl.math.log2(l_i)
     acc = acc / l_i[:, None]
     m_ptrs = M + off_hz * N_CTX + offs_m
     tl.store(m_ptrs, m_i)
     desc_o.store([qo_offset_y, 0], acc.to(dtype))
-
+    # -->
     if COMPUTE_ENTROPY:
     entropy_ptrs = ENTROPY + off_hz * N_CTX + offs_m
         tl.store(entropy_ptrs, m_i - r_i)
+    # <--
 
         </code></pre>
       </div>
@@ -149,13 +151,13 @@ def _attn_fwd(sm_scale, M,
 @triton.jit
 def _attn_fwd_inner(
     acc, l_i, m_i,
-    # New
+    # -->
     r_i,
-    # ---
+    COMPUTE_ENTROPY: tl.constexpr,
+    # <--
     q,
     desc_k, desc_v,
     offset_y, dtype: tl.constexpr, start_m, qk_scale,
-    COMPUTE_ENTROPY: tl.constexpr,  # NEW
     BLOCK_M: tl.constexpr, HEAD_DIM: tl.constexpr, BLOCK_N: tl.constexpr,
     STAGE: tl.constexpr, offs_m: tl.constexpr, offs_n: tl.constexpr,
     N_CTX: tl.constexpr, warp_specialize: tl.constexpr, IS_HOPPER: tl.constexpr
@@ -184,18 +186,17 @@ def _attn_fwd_inner(
             mask = offs_m[:, None] >= (start_n + offs_n[None, :])
             qk = qk * qk_scale + tl.where(mask, 0, -1.0e6)
             m_ij = tl.maximum(m_i, tl.max(qk, 1))
-            ### REMOVE
-            qk -= m_ij[:, None]
-            # ---
-            
+            # -->
+            # qk -= m_ij[:, None]
+            # <--
         else:
             m_ij = tl.maximum(m_i, tl.max(qk, 1) * qk_scale)
-            ### REMOVE
-            qk = qk * qk_scale - m_ij[:, None]
-            # ---
-            ### New
+            # -->
+            # qk = qk * qk_scale - m_ij[:, None]
+            # <--
+            # -->
             qk = qk * qk_scale
-            # ---
+            # <--
         p = tl.math.exp2(qk)
         # -- compute correction factor
         alpha = tl.math.exp2(m_i - m_ij)
@@ -222,10 +223,10 @@ def _attn_fwd_inner(
         # place this at the end of the loop to reduce register pressure
         l_i = l_i * alpha + l_ij
         m_i = m_ij
-        # --- NEW ---
+        # -->
         if COMPUTE_ENTROPY:
             r_i = tl.dot(p, qk, l_i / l_ij * r_i)
-        # ---
+        # <--
         offsetk_y += BLOCK_N
         offsetv_y += BLOCK_N
     return acc, l_i, m_i
@@ -237,7 +238,7 @@ def _attn_fwd_inner(
 
     </div>
 
-    <div class="footer"> Last updated Oct 12, 2025 </div>
+    <div class="footer"> Last updated Nov 23, 2025 </div>
 
   </div>
 

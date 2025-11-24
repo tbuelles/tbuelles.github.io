@@ -64,3 +64,18 @@ document.addEventListener('click', (e) => {
     if (e.key === 'Escape') tip.classList.remove('show');
   });
 })();
+
+
+// // copy raw
+// document.addEventListener('click', (e) => {
+//   if (!e.target.matches('.copy-btn')) return;
+//   const id = e.target.getAttribute('data-target');
+//   const codeEl = document.getElementById(id);
+//   if (!codeEl) return;
+//   const text = codeEl.dataset.raw || codeEl.innerText;
+//   navigator.clipboard?.writeText(text).then(() => {
+//     const old = e.target.innerText;
+//     e.target.innerText = 'Copied';
+//     setTimeout(()=> e.target.innerText = old, 1200);
+//   });
+// });
