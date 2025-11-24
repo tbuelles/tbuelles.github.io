@@ -40,7 +40,7 @@
       <p>
         Attention entropy collapse is a failure mode in ML where attention logits converge to a small number of states, thus losing the ability to model the distribution.
         In practice, this is often patched with Layernorm / RMSNorm.<span class="footnote-ref" data-note="I don't think this is the right approach long-term."></span>
-        To monitor this effect, it is useful to compute this entropy online with the same GPU kernel.
+        I discuss how to monitor and compute the attention entropy online with the same GPU kernel.
       </p>
 
       <h3>Entropy</h3>
@@ -87,11 +87,11 @@
       &= -\sum_{j=1}^n p_{ij} (s_{ij} - m_i - \log l_i) \\
       &= m_i + \log l_i - \sum_{j=1}^n \exp(s_{ij} - m_i)s_{ij}
       \end{align*}
-      The first term \(m_i + \log l_i\) is already computed online. The last term can be computed online as well using an additional accumulator for \(x_i = \sum_j \exp(s_{ij} - m_i) s_{ij}\) and update as:
+      The first term \(m_i + \log l_i\) is already computed online. The last term can be computed online as well using an additional accumulator for \(r_i = \sum_j \exp(s_{ij} - m_i) s_{ij}\) and update as:
         \begin{align*}
-        x_i &\leftarrow x_i * \frac{l_i}{l_{ij}} + \sum_{\text{tile}} \exp(s_{ij} - m_i) s_{ij} \\
+        r_i &\leftarrow r_i * \frac{l_i}{l_{ij}} + \sum_{\text{tile}} \exp(s_{ij} - m_i) s_{ij} \\
         \end{align*}
-      The final result for the entropy is then \(H(p_i) = m_i + \log l_i - x_i\).
+      The final result for the entropy is then \(H(p_i) = m_i + \log l_i - r_i\).
 
       <h2>GPU kernel</h2>
     Any implementation of fused attention can be extended as above. It is particularly simple in this case because it only concerns the forward kernel.
@@ -101,7 +101,9 @@
         <pre><code id="kernel" class="language-python">
 @triton.jit
 def _attn_fwd(sm_scale, M,
+    ENTROPY,  # NEW
     Z, H, desc_q, desc_k, desc_v, desc_o, N_CTX,
+    COMPUTE_ENTROPY: tl.constexpr, # NEW
     HEAD_DIM: tl.constexpr,
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
@@ -122,13 +124,9 @@ def _attn_fwd(sm_scale, M,
     acc = tl.zeros([BLOCK_M, HEAD_DIM], dtype=tl.float32)
     ### New
     if COMPUTE_ENTROPY:
-        entropy_i = tl.zeros([BLOCK_M], dtype=tl.float32)
+        r_i = tl.zeros([BLOCK_M], dtype=tl.float32)
     ###
     ...
-    if COMPUTE_ENTROPY:
-        alpha_prod = tl.where(qkv_mask, alpha, 0.0)
-        e_tile = tl.sum(alpha_prod * t_tile, axis=1)  # (BLOCK_SIZE_Q,), fp32
-        e_acc = f * e_acc + e_tile
 
     # epilogue
     m_i += tl.math.log2(l_i)
@@ -138,17 +136,8 @@ def _attn_fwd(sm_scale, M,
     desc_o.store([qo_offset_y, 0], acc.to(dtype))
 
     if COMPUTE_ENTROPY:
-    entropy_ptrs = ENTROPY + off_hz * N_CTXn + offs_m
-        tl.store(entropy_ptrs, entropy_i)
-
-    @triton.jit
-    def _attn_fwd_inner(acc, l_i, m_i, q,
-        desc_k, desc_v,
-        offset_y, dtype: tl.constexpr, start_m, qk_scale,
-        BLOCK_M: tl.constexpr, HEAD_DIM: tl.constexpr, BLOCK_N: tl.constexpr,
-        STAGE: tl.constexpr, offs_m: tl.constexpr, offs_n: tl.constexpr,
-        N_CTX: tl.constexpr, warp_specialize: tl.constexpr, IS_HOPPER: tl.constexpr
-    ):
+    entropy_ptrs = ENTROPY + off_hz * N_CTX + offs_m
+        tl.store(entropy_ptrs, m_i - r_i)
 
         </code></pre>
       </div>
@@ -158,13 +147,89 @@ def _attn_fwd(sm_scale, M,
         <button class="copy-btn" data-target="kernel">Copy</button>
         <pre><code id="kernel" class="language-python">
 @triton.jit
-def _attn_fwd_inner(acc, l_i, m_i, q,
+def _attn_fwd_inner(
+    acc, l_i, m_i,
+    # New
+    r_i,
+    # ---
+    q,
     desc_k, desc_v,
     offset_y, dtype: tl.constexpr, start_m, qk_scale,
+    COMPUTE_ENTROPY: tl.constexpr,  # NEW
     BLOCK_M: tl.constexpr, HEAD_DIM: tl.constexpr, BLOCK_N: tl.constexpr,
     STAGE: tl.constexpr, offs_m: tl.constexpr, offs_n: tl.constexpr,
     N_CTX: tl.constexpr, warp_specialize: tl.constexpr, IS_HOPPER: tl.constexpr
 ):
+    # range of values handled by this stage
+    if STAGE == 1:
+        lo, hi = 0, start_m * BLOCK_M
+    elif STAGE == 2:
+        lo, hi = start_m * BLOCK_M, (start_m + 1) * BLOCK_M
+        lo = tl.multiple_of(lo, BLOCK_M)
+    # causal = False
+    else:
+        lo, hi = 0, N_CTX
+    offsetk_y = offset_y + lo
+    if dtype == tl.float8e5:
+        offsetv_y = offset_y * HEAD_DIM + lo
+    else:
+        offsetv_y = offset_y + lo
+    # loop over k, v and update accumulator
+    for start_n in tl.range(lo, hi, BLOCK_N, warp_specialize=warp_specialize):
+        start_n = tl.multiple_of(start_n, BLOCK_N)
+        # -- compute qk ----
+        k = desc_k.load([offsetk_y, 0]).T
+        qk = tl.dot(q, k)
+        if STAGE == 2:
+            mask = offs_m[:, None] >= (start_n + offs_n[None, :])
+            qk = qk * qk_scale + tl.where(mask, 0, -1.0e6)
+            m_ij = tl.maximum(m_i, tl.max(qk, 1))
+            ### REMOVE
+            qk -= m_ij[:, None]
+            # ---
+            
+        else:
+            m_ij = tl.maximum(m_i, tl.max(qk, 1) * qk_scale)
+            ### REMOVE
+            qk = qk * qk_scale - m_ij[:, None]
+            # ---
+            ### New
+            qk = qk * qk_scale
+            # ---
+        p = tl.math.exp2(qk)
+        # -- compute correction factor
+        alpha = tl.math.exp2(m_i - m_ij)
+        l_ij = tl.sum(p, 1)
+        # -- update output accumulator --
+        if not IS_HOPPER and warp_specialize and BLOCK_M == 128 and HEAD_DIM == 128:
+            BM: tl.constexpr = acc.shape[0]
+            BN: tl.constexpr = acc.shape[1]
+            acc0, acc1 = acc.reshape([BM, 2, BN // 2]).permute(0, 2, 1).split()
+            acc0 = acc0 * alpha[:, None]
+            acc1 = acc1 * alpha[:, None]
+            acc = tl.join(acc0, acc1).permute(0, 2, 1).reshape([BM, BN])
+        else:
+            acc = acc * alpha[:, None]
+                    # prepare p and v for the dot
+        if dtype == tl.float8e5:
+            v = desc_v.load([0, offsetv_y]).T
+        else:
+            v = desc_v.load([offsetv_y, 0])
+        p = p.to(dtype)
+        # note that this non transposed v for FP8 is only supported on Blackwell
+        acc = tl.dot(p, v, acc)
+        # update m_i and l_i
+        # place this at the end of the loop to reduce register pressure
+        l_i = l_i * alpha + l_ij
+        m_i = m_ij
+        # --- NEW ---
+        if COMPUTE_ENTROPY:
+            r_i = tl.dot(p, qk, l_i / l_ij * r_i)
+        # ---
+        offsetk_y += BLOCK_N
+        offsetv_y += BLOCK_N
+    return acc, l_i, m_i
+        
 
         </code></pre>
       </div>
