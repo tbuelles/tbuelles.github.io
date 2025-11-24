@@ -29,7 +29,7 @@
     <header class="site-header">
       <a class="link-bold back-left" href="/blog.html" aria-label="Blog"><i class="fa fa-arrow-left"></i> Blog</a>
       <div class="title-wrap">
-        <h1>Attention Entropy Collapse</h1>
+        <h1>Online Attention Entropy</h1>
         <div class="post-meta">November 23, 2025</div>
       </div>
     </header>
@@ -39,7 +39,8 @@
       <h3>Intro</h3>
       <p>
         Attention entropy collapse is a failure mode in ML where attention logits converge to a small number of states, thus losing the ability to model the distribution.
-        In practice, this is often patched with Layernorm / RMSNorm. \footnote{I don't think this is the right approach long-term.}
+        In practice, this is often patched with Layernorm / RMSNorm.<span class="footnote-ref" data-note="I don't think this is the right approach long-term."></span>
+        To monitor this effect, it is useful to compute this entropy online with the same GPU kernel.
       </p>
 
       <h3>Entropy</h3>
@@ -58,7 +59,7 @@
         f_\theta(x)_i &= \sum_{j=1}^n \alpha_{ij} v_j
         \end{align*}
 
-        The most commonly used \(g_i\) are composition of positional encodings \(g_i(y) = e^{2\pi i \gamma} y\) and normalization \(g_i(y) = \gamma * \frac{y - \bar \mu}{\bar \sigma} + \beta\).
+        The most commonly used \(g_i\) are compositions of positional encodings \(g_i(y) = e^{2\pi i \gamma} y\) and normalization \(g_i(y) = \gamma * \frac{y - \bar \mu}{\bar \sigma} + \beta\).
       </p>
 
       <h2>Fused Attention</h2>
@@ -66,7 +67,7 @@
       <p>
         Attention is computed with tiling and online softmax, see <a class="link-bold" href="https://arxiv.org/pdf/2205.14135">https://arxiv.org/pdf/2205.14135</a>. I will use Triton jargon to recall the algorithm (I find this more intuitive than CUDA).
         The work is divided into parallel programs each processing a block of queries \(q_i\) of size <code>BLOCK_M</code>. Note that from now on \(i\) denotes a block of indices rather than a single index.
-        Each program loops over tiles of keys and values to compute online softmax by updating accumulators \(m_i, l_i, acc\) as
+        Each program loops over tiles of keys and values to compute online softmax by updating accumulators \(m_i, l_i, acc_i\) as
         \begin{align*}
         s_{ij} &\leftarrow q_i \cdot k_j \\
         m_{ij} &\leftarrow \max(m_i, s_{ij}) \\
@@ -75,8 +76,8 @@
         m_i &\leftarrow \max(m_i, m_{ij}) \\
         l_i &\leftarrow l_{ij}\\
         \end{align*}
-        This computes the max \(m_i\) of dot products across all tiles and the partition function \(l_i = \sum_{j=1}^n \exp(q_i \cdot k_j - m_i)\). The output is \(f_\theta(x)_i = acc_i / l_i\).
-        Note that we can easily extend this algorithm to also compute the entropy with near zero additional overhead. 
+        This computes the max \(m_i\) of dot products across all tiles and the partition function \(l_i = \sum_{j=1}^n \exp(s_{ij} - m_i)\). The output is \(f_\theta(x)_i = acc_i / l_i\).
+        This algorithm can be extended to compute the entropy online with near zero additional overhead. 
     </p>
 
       <h2>Online Entropy</h2>
@@ -86,7 +87,7 @@
       &= -\sum_{j=1}^n p_{ij} (s_{ij} - m_i - \log l_i) \\
       &= m_i + \log l_i - \sum_{j=1}^n \exp(s_{ij} - m_i)s_{ij}
       \end{align*}
-      The first term \(m_i + \log l_i\) is already computed online. The last term can be computed online as well, we just need to maintain an additional accumulator for \(x_i = \sum_j e^{s_{ij} - m_i} s_{ij}\) and update as:
+      The first term \(m_i + \log l_i\) is already computed online. The last term can be computed online as well using an additional accumulator for \(x_i = \sum_j \exp(s_{ij} - m_i) s_{ij}\) and update as:
         \begin{align*}
         x_i &\leftarrow x_i * \frac{l_i}{l_{ij}} + \sum_{\text{tile}} \exp(s_{ij} - m_i) s_{ij} \\
         \end{align*}

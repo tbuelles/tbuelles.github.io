@@ -25,7 +25,7 @@
     <!-- Intro -->
     <div class="section">
       <p>
-        Thoughts on research and technical topics. Experiences as a mathematician working in industry. How not to get bored. Opinions are my own.
+        Thoughts on research and technical topics. Experiences as a mathematician in industry. Opinions are my own.
       </p>
     </div>
 
@@ -34,11 +34,12 @@
 
       <!-- Example post 1 -->
       <article class="post-summary">
-        <h2 class="post-title"><a href="posts/2025-11-23-attention-entropy.html">Attention Entropy</a></h2>
-        <div class="post-meta">October 12, 2025</div>
+        <h2 class="post-title"><a href="posts/2025-11-23-online-attention-entropy.html">Online Attention Entropy</a></h2>
+        <div class="post-meta">November 23, 2025</div>
         <p class="post-abstract">
         Attention entropy collapse is a failure mode in ML where attention logits converge to a small number of states, thus losing the ability to model the distribution.
-        I give an overview of common problems and how to compute and monitor entropy on-the-fly with a simple GPU kernel.
+        In practice, this is often patched with Layernorm / RMSNorm.<span class="footnote-ref" data-note="I don't think this is the right approach long-term."></span>
+        To monitor this effect, it is useful to compute this entropy online with the same GPU kernel.
       </article>
 
     </div>
