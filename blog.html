@@ -1,13 +1,14 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <title>Blog — Tim-Henrik Buelles</title>
-  <meta name="author" content="Tim-Henrik Buelles" />
-  <meta name="viewport" content="width=device-width; initial-scale=1.0" />
-  <link rel="stylesheet" type="text/css" href="home.css" />
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+    <meta charset="utf-8" />
+    <title>Blog — Tim-Henrik Buelles</title>
+    <meta name="author" content="Tim-Henrik Buelles" />
+    <meta name="viewport" content="width=device-width; initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="home.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+    <script src="./home.js" defer></script>
 </head>
 
 <body>
@@ -25,7 +26,7 @@
     <!-- Intro -->
     <div class="section">
       <p>
-        Thoughts on research and technical topics. Experiences as a mathematician in industry. Opinions are my own.
+        Thoughts on research and engineering. Experiences as a mathematician in industry. Opinions are my own.
       </p>
     </div>
 
@@ -35,35 +36,18 @@
       <!-- Example post 1 -->
       <article class="post-summary">
         <h2 class="post-title"><a href="posts/2025-11-23-online-attention-entropy.html">Online Attention Entropy</a></h2>
-        <div class="post-meta">November 23, 2025</div>
+        <div class="post-meta"><span class="today"></span></div>
         <p class="post-abstract">
-        Attention entropy collapse is a failure mode in ML where attention logits converge to a small number of states, thus losing the ability to model the distribution.
-        In practice, this is often patched with Layernorm / RMSNorm.<span class="footnote-ref" data-note="I don't think this is the right approach long-term."></span>
-        I discuss how to monitor and compute the attention entropy online with the same GPU kernel.
+        Attention entropy collapse is a failure mode in ML where attention logits converge to a small number of states.
+        In practice, this is often poorly monitored and patched with normalization.
+        In this note, I discuss how to extend the attention algorithm to compute entropy online with the same GPU kernel.
       </article>
 
     </div>
 
-    <div class="footer"> Last updated Nov 23, 2025 </div>
+    <div class="footer"> Last updated <span class="today"></span></div>
 
   </div>
-
-  <style>
-    /* Small page-specific helpers (keeps everything in one file if you prefer) */
-    /* If you already have styles for .section, .container in home.css these are just gentle overrides. */
-    /* /* .posts-list { display: block; margin-top: 6px; } */
-    .post-summary { padding: 1.0rem 0; border-bottom: none; }
-    .post-title { margin: 0 0 0.25rem 0; font-family: "Noto Serif", serif; font-weight: 700; font-size: 1.1rem; }
-    .post-title a { text-decoration: none; color: inherit; }
-    .post-title a:hover { text-decoration: underline; }
-    .post-meta { color: #666; font-size: 0.9rem; margin-bottom: 0.35rem; font-family: "Open Sans", sans-serif; }
-    .post-abstract { margin: 0 0 0.5rem 0; line-height: 1.5; color: #222; }
-    .muted { color: #666; margin-top: 0.25rem; }
-    .pagination a { text-decoration: none; color: inherit; padding: 0.25rem 0.5rem; }
-    /* Position the back link in the top-left without changing flow */
-    .section.profile { position: relative; }
-    
-  </style>
 
 </body>
 </html>

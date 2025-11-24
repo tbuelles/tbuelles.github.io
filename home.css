@@ -83,6 +83,58 @@ li {
 }
 
 /*specify content style*/
+/* Blog list / post summary styling */
+.post-summary {
+  padding: 1.0rem 0;
+  border-bottom: none;
+}
+
+.post-title {
+  margin: 0 0 0.25rem 0;
+  font-family: "Noto Serif", serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.post-title a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.post-title a:hover {
+  text-decoration: underline;
+}
+
+.post-meta {
+  color: #666;
+  font-size: 1.0rem;
+  margin-bottom: 0.35rem;
+  font-family: "Open Sans", sans-serif;
+}
+
+.post-abstract {
+  margin: 0 0 0.5rem 0;
+  line-height: 1.5;
+  color: #222;
+}
+
+.muted {
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.pagination a {
+  text-decoration: none;
+  color: inherit;
+  padding: 0.25rem 0.5rem;
+}
+
+/* Position the back link in the top-left without changing flow */
+.section.profile {
+  position: relative;
+}
+
+
 code .code-removed {
     display: inline-block;           /* extend background across full line width */
     background: rgba(231, 76, 60, 0.18);   /* red-ish */
@@ -149,7 +201,6 @@ code .code-added {
 @media (max-width: 640px) {
   .footnote-box { right: 0.75rem; left: 0.75rem; width: auto; max-width: none; top: 10vh; }
 }
-
 
 
 .back-left {
