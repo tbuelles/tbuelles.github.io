@@ -58,7 +58,7 @@
         f_\theta(x)_i &= \sum_{j=1}^n \alpha_{ij} v_j
         \end{align*}
 
-        The functions \(g_i\) are commonly used for positional encodings \(g_i(y) = e^{2\pi i \gamma} y\) or normalization \(g_i(y) = \frac{y - \bar \mu}{\bar \sigma}\).
+        The most commonly used \(g_i\) are composition of positional encodings \(g_i(y) = e^{2\pi i \gamma} y\) and normalization \(g_i(y) = \gamma * \frac{y - \bar \mu}{\bar \sigma} + \beta\).
       </p>
 
       <h2>GPU kernel</h2>
