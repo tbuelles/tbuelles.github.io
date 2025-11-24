@@ -39,7 +39,7 @@
       <h3>Intro</h3>
       <p>
         Attention entropy collapse is a failure mode in ML where attention logits converge to a small number of states, thus losing the ability to model the distribution.
-        In practice, this is often patched with Layernorm / RMSNorm. I don't think this is the right approach long-term.
+        In practice, this is often patched with Layernorm / RMSNorm. \footnote{I don't think this is the right approach long-term.}
       </p>
 
       <h3>Entropy</h3>
@@ -61,24 +61,110 @@
         The most commonly used \(g_i\) are composition of positional encodings \(g_i(y) = e^{2\pi i \gamma} y\) and normalization \(g_i(y) = \gamma * \frac{y - \bar \mu}{\bar \sigma} + \beta\).
       </p>
 
-      <h2>GPU kernel</h2>
+      <h2>Fused Attention</h2>
 
       <p>
-        Attention is computed with "flash attention" which is tiling and online-softmax, see <a class="link-bold"href="https://github.com/Dao-AILab/flash-attention">https://github.com/Dao-AILab/flash-attention</a>.
-        Any such implementation can be extended to compute entropy within the same kernel. This adds near zero overhead. It is particularly simple because it only touches the forward kernel.
-        Below is an example using Triton, see <a class="link-bold" target="_blank" href="https://github.com/YOUR_USERNAME/YOUR_REPO">GitHub — Attention Entropy Kernel</a> for full code and usage.
-      </p>
+        Attention is computed with tiling and online softmax, see <a class="link-bold" href="https://arxiv.org/pdf/2205.14135">https://arxiv.org/pdf/2205.14135</a>. I will use Triton jargon to recall the algorithm (I find this more intuitive than CUDA).
+        The work is divided into parallel programs each processing a block of queries \(q_i\) of size <code>BLOCK_M</code>. Note that from now on \(i\) denotes a block of indices rather than a single index.
+        Each program loops over tiles of keys and values to compute online softmax by updating accumulators \(m_i, l_i, acc\) as
+        \begin{align*}
+        s_{ij} &\leftarrow q_i \cdot k_j \\
+        m_{ij} &\leftarrow \max(m_i, s_{ij}) \\
+        l_{ij} &\leftarrow l_i * \exp(m_i - m_{ij}) + \sum_{\text{tile}} \exp(s_{ij} - m_i) \\
+        acc_i &\leftarrow acc_i * \frac{l_i}{l_{ij}} + \sum_{\text{tile}} \exp(s_{ij} - m_i) v_j\\
+        m_i &\leftarrow \max(m_i, m_{ij}) \\
+        l_i &\leftarrow l_{ij}\\
+        \end{align*}
+        This computes the max \(m_i\) of dot products across all tiles and the partition function \(l_i = \sum_{j=1}^n \exp(q_i \cdot k_j - m_i)\). The output is \(f_\theta(x)_i = acc_i / l_i\).
+        Note that we can easily extend this algorithm to also compute the entropy with near zero additional overhead. 
+    </p>
+
+      <h2>Online Entropy</h2>
+      We can rearrange the entropy computation as
+      \begin{align*}
+      H(p_i) &= -\sum_{j=1}^n p_{ij} \log p_{ij} \\
+      &= -\sum_{j=1}^n p_{ij} (s_{ij} - m_i - \log l_i) \\
+      &= m_i + \log l_i - \sum_{j=1}^n \exp(s_{ij} - m_i)s_{ij}
+      \end{align*}
+      The first term \(m_i + \log l_i\) is already computed online. The last term can be computed online as well, we just need to maintain an additional accumulator for \(x_i = \sum_j e^{s_{ij} - m_i} s_{ij}\) and update as:
+        \begin{align*}
+        x_i &\leftarrow x_i * \frac{l_i}{l_{ij}} + \sum_{\text{tile}} \exp(s_{ij} - m_i) s_{ij} \\
+        \end{align*}
+      The final result for the entropy is then \(H(p_i) = m_i + \log l_i - x_i\).
+
+      <h2>GPU kernel</h2>
+    Any implementation of fused attention can be extended as above. It is particularly simple in this case because it only concerns the forward kernel.
+    Below is an extension of <a class="link-bold" href="https://github.com/triton-lang/triton/blob/main/python/tutorials/06-fused-attention.py">OpenAI's fused attention</a>, see <a class="link-bold" target="_blank" href="https://github.com/YOUR_USERNAME/YOUR_REPO">GitHub — Attention Entropy Kernel</a> for full code and usage.
+      <div class="code-wrap">
+        <button class="copy-btn" data-target="kernel">Copy</button>
+        <pre><code id="kernel" class="language-python">
+@triton.jit
+def _attn_fwd(sm_scale, M,
+    Z, H, desc_q, desc_k, desc_v, desc_o, N_CTX,
+    HEAD_DIM: tl.constexpr,
+    BLOCK_M: tl.constexpr,
+    BLOCK_N: tl.constexpr,
+    FP8_OUTPUT: tl.constexpr,
+    STAGE: tl.constexpr,
+    warp_specialize: tl.constexpr,
+    IS_HOPPER: tl.constexpr,
+):
+    ...
+    offset_y = off_z * (N_CTX * H) + off_h * N_CTX
+    qo_offset_y = offset_y + start_m * BLOCK_M
+    # initialize offsets
+    offs_m = start_m * BLOCK_M + tl.arange(0, BLOCK_M)
+    offs_n = tl.arange(0, BLOCK_N)
+    # initialize pointer to m and l
+    m_i = tl.zeros([BLOCK_M], dtype=tl.float32) - float("inf")
+    l_i = tl.zeros([BLOCK_M], dtype=tl.float32) + 1.0
+    acc = tl.zeros([BLOCK_M, HEAD_DIM], dtype=tl.float32)
+    ### New
+    if COMPUTE_ENTROPY:
+        entropy_i = tl.zeros([BLOCK_M], dtype=tl.float32)
+    ###
+    ...
+    if COMPUTE_ENTROPY:
+        alpha_prod = tl.where(qkv_mask, alpha, 0.0)
+        e_tile = tl.sum(alpha_prod * t_tile, axis=1)  # (BLOCK_SIZE_Q,), fp32
+        e_acc = f * e_acc + e_tile
+
+    # epilogue
+    m_i += tl.math.log2(l_i)
+    acc = acc / l_i[:, None]
+    m_ptrs = M + off_hz * N_CTX + offs_m
+    tl.store(m_ptrs, m_i)
+    desc_o.store([qo_offset_y, 0], acc.to(dtype))
+
+    if COMPUTE_ENTROPY:
+    entropy_ptrs = ENTROPY + off_hz * N_CTXn + offs_m
+        tl.store(entropy_ptrs, entropy_i)
+
+    @triton.jit
+    def _attn_fwd_inner(acc, l_i, m_i, q,
+        desc_k, desc_v,
+        offset_y, dtype: tl.constexpr, start_m, qk_scale,
+        BLOCK_M: tl.constexpr, HEAD_DIM: tl.constexpr, BLOCK_N: tl.constexpr,
+        STAGE: tl.constexpr, offs_m: tl.constexpr, offs_n: tl.constexpr,
+        N_CTX: tl.constexpr, warp_specialize: tl.constexpr, IS_HOPPER: tl.constexpr
+    ):
+
+        </code></pre>
+      </div>
+      
 
       <div class="code-wrap">
         <button class="copy-btn" data-target="kernel">Copy</button>
         <pre><code id="kernel" class="language-python">
 @triton.jit
-def attention_entropy_kernel(
-    Q, K, S,  # input queries, keys, output entropies
-    M, N, H,  # sizes: M=query length, N=key length, H=num heads
-    BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr
+def _attn_fwd_inner(acc, l_i, m_i, q,
+    desc_k, desc_v,
+    offset_y, dtype: tl.constexpr, start_m, qk_scale,
+    BLOCK_M: tl.constexpr, HEAD_DIM: tl.constexpr, BLOCK_N: tl.constexpr,
+    STAGE: tl.constexpr, offs_m: tl.constexpr, offs_n: tl.constexpr,
+    N_CTX: tl.constexpr, warp_specialize: tl.constexpr, IS_HOPPER: tl.constexpr
 ):
-    head_id = tl.program_id(0)    # which head are we processing
+
         </code></pre>
       </div>
 
