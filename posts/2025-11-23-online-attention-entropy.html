@@ -38,16 +38,17 @@
     <div class="section">
       <h3>Intro</h3>
       <p>
-        Attention entropy collapse is a failure mode in ML where attention logits converge to a small number of states, thus losing the ability to model the distribution.
-        In practice, this is often patched with Layernorm / RMSNorm. I discuss how to monitor and compute the attention entropy online with the same GPU kernel.
-      </p>
+        Attention entropy collapse is a failure mode in ML where attention logits converge to a small number of states.
+        In practice, this is often poorly monitored and patched with normalization.
+        In this note, I discuss how to extend the attention algorithm to compute entropy online with the same GPU kernel.
+        </p>
     <hr class="header-separator">
 
       <h3>Entropy</h3>
       <p>
         Consider data \(x=(x_1, \ldots, x_n)\) from \(p(x)\). Recall entropy  \(-\mathbb{E}_{x \sim p}[\log p(x)]\).
         It is maximized by uniform distributions, and collapses to zero for delta distributions.
-        Entropy is the Jensen gap between cross-entropy \(-\mathbb{E}_{x \sim p}[\log f(x)] \geq H(p)\) and KL divergence \(D_{KL}(p || f)\) for any model \(f\).
+        Entropy is the Jensen gap between cross-entropy \(-\mathbb{E}_{x \sim p}[\log f(x)]\) and KL divergence \(D_{KL}(p || f)\) for any model \(f\).
     <hr class="header-separator">
 
       <h3>Model</h3>
@@ -55,9 +56,9 @@
         Let \(f_\theta\) be a parametric model for the \(n\) conditional distributions \(p(x_i | \bar x_i)\) where \(\bar x_i\) is the context \(x=(x_1, \ldots, \emptyset, \ldots, x_n)\).
         In ML, this is the typical subproblem of modeling \(p(x)\). Consider the simple attention model
         \begin{align*}
-        q_i = g_i\left(W_q x_i\right)\,, \quad k_j &= g_j\left(W_k x_j\right), \quad v_j = W_v x_j \\[1em]
-        \alpha_{ij} &= \frac{\exp(q_i \cdot k_j)}{\sum_{l=1}^n \exp(q_i \cdot k_l)} \\[1em]
-        f_\theta(x)_i &= \sum_{j=1}^n \alpha_{ij} v_j
+        q_i &= g_i\left(W_q x_i\right)\,, \quad k_j = g_j\left(W_k x_j\right), \quad v_j = W_v x_j \\[1em]
+        \alpha_{ij} &= \frac{\exp(q_i \cdot k_j)}{\sum_{l=1}^n \exp(q_i \cdot k_l)}\,,\quad
+        f_\theta(x)_i = \sum_{j=1}^n \alpha_{ij} v_j\,.
         \end{align*}
 
         The most commonly used \(g_i\) are compositions of positional encodings \(g_i(y) = e^{2\pi i \gamma} y\) and normalization \(g_i(y) = \gamma * \frac{y - \bar \mu}{\bar \sigma} + \beta\).
