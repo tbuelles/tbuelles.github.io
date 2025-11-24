@@ -5,10 +5,10 @@
     <title>Blog — Tim-Henrik Buelles</title>
     <meta name="author" content="Tim-Henrik Buelles" />
     <meta name="viewport" content="width=device-width; initial-scale=1.0" />
-    <link rel="stylesheet" type="text/css" href="home.css" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
-    <script src="./home.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="./assets/css/home.css" />
+    <script src="./assets/js/home.js" defer></script>
 </head>
 
 <body>
@@ -25,7 +25,7 @@
 
     <!-- Intro -->
     <div class="section">
-      <p>
+      <p class="post-abstract">
         Thoughts on research and engineering. Experiences as a mathematician in industry. Opinions are my own.
       </p>
     </div>
@@ -34,14 +34,17 @@
     <div class="section posts-list">
 
       <!-- Example post 1 -->
-      <article class="post-summary">
-        <h2 class="post-title"><a href="posts/2025-11-23-online-attention-entropy.html">Online Attention Entropy</a></h2>
+    <article class="post-summary">
+    <a class="post-link" href="posts/2025-11-23-online-attention-entropy.html">
+        <h2 class="post-title">Online Attention Entropy</h2>
         <div class="post-meta"><span class="today"></span></div>
         <p class="post-abstract">
         Attention entropy collapse is a failure mode in ML where attention logits converge to a small number of states.
         In practice, this is often poorly monitored and patched with normalization.
         In this note, I discuss how to extend the attention algorithm to compute entropy online with the same GPU kernel.
-      </article>
+        </p>
+    </a>
+    </article>
 
     </div>
 
