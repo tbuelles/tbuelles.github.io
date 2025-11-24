@@ -3,21 +3,21 @@
 
 
 <head>
-  <meta charset="utf-8" />
-  <title>Attention Entropy Collapse — Tim-Henrik Buelles</title>
-  <meta name="author" content="Tim-Henrik Buelles" />
-  <meta name="viewport" content="width=device-width; initial-scale=1.0" />
-  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-  <link rel="stylesheet" type="text/css" href="../home.css" />
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
-  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
-  <script src="../home.js" defer></script>
+    <meta charset="utf-8" />
+    <title>Attention Entropy Collapse — Tim-Henrik Buelles</title>
+    <meta name="author" content="Tim-Henrik Buelles" />
+    <meta name="viewport" content="width=device-width; initial-scale=1.0" />
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="stylesheet" type="text/css" href="../home.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../home.js" defer></script>
 
 </head>
+
 
 
 <body>
@@ -30,7 +30,7 @@
       <a class="link-bold back-left" href="/blog.html" aria-label="Blog"><i class="fa fa-arrow-left"></i> Blog</a>
       <div class="title-wrap">
         <h1>Online Attention Entropy</h1>
-        <div class="post-meta">November 23, 2025</div>
+        <div class="post-meta"><span id="today"></span></div>
       </div>
     </header>
 
@@ -39,15 +39,16 @@
       <h3>Intro</h3>
       <p>
         Attention entropy collapse is a failure mode in ML where attention logits converge to a small number of states, thus losing the ability to model the distribution.
-        In practice, this is often patched with Layernorm / RMSNorm.<span class="footnote-ref" data-note="I don't think this is the right approach long-term."></span>
-        I discuss how to monitor and compute the attention entropy online with the same GPU kernel.
+        In practice, this is often patched with Layernorm / RMSNorm. I discuss how to monitor and compute the attention entropy online with the same GPU kernel.
       </p>
+    <hr class="header-separator">
 
       <h3>Entropy</h3>
       <p>
         Consider data \(x=(x_1, \ldots, x_n)\) from \(p(x)\). Recall entropy  \(-\mathbb{E}_{x \sim p}[\log p(x)]\).
         It is maximized by uniform distributions, and collapses to zero for delta distributions.
         Entropy is the Jensen gap between cross-entropy \(-\mathbb{E}_{x \sim p}[\log f(x)] \geq H(p)\) and KL divergence \(D_{KL}(p || f)\) for any model \(f\).
+    <hr class="header-separator">
 
       <h3>Model</h3>
       <p>
@@ -62,11 +63,22 @@
         The most commonly used \(g_i\) are compositions of positional encodings \(g_i(y) = e^{2\pi i \gamma} y\) and normalization \(g_i(y) = \gamma * \frac{y - \bar \mu}{\bar \sigma} + \beta\).
       </p>
 
-      <h2>Fused Attention</h2>
+    <hr class="header-separator">
 
+      <h2>Fused Attention</h2>
       <p>
-        Attention is computed with tiling and online softmax, see <a class="link-bold" href="https://arxiv.org/pdf/2205.14135">https://arxiv.org/pdf/2205.14135</a>. I will use Triton jargon to recall the algorithm (I find this more intuitive than CUDA).
-        The work is divided into parallel programs each processing a block of queries \(q_i\) of size <code>BLOCK_M</code>. Note that from now on \(i\) denotes a block of indices rather than a single index.
+        Attention is computed with tiling and online softmax.<span class="footnote-ref"></span>
+        <span class="footnote-source">
+        1) Rabe, Stats 'Self-Attention does not need \(O(n^2)\) memory' <a class="link-bold" href="https://arxiv.org/pdf/2112.05682">https://arxiv.org/pdf/2112.05682</a>
+        <br>
+        2) Dao, Fu, et al. 'FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness' <a class="link-bold" href="https://arxiv.org/pdf/2205.14135">https://arxiv.org/pdf/2205.14135</a>
+        <br>
+        3+) FlashAttention2, FlashAttention3, ...
+        </span>
+        The algorithm is best explained in Triton jargon (I find this more intuitive than CUDA). Notation is mostly consistent with code below.
+        <br>
+        The work is divided into parallel programs each processing a block of queries \(q_i\).<span class="footnote-ref"></span>
+        <span class="footnote-source">Note that from now on \(i\) denotes a block of indices rather than a single index.</span>
         Each program loops over tiles of keys and values to compute online softmax by updating accumulators \(m_i, l_i, acc_i\) as
         \begin{align*}
         s_{ij} &\leftarrow q_i \cdot k_j \\
@@ -79,6 +91,7 @@
         This computes the max \(m_i\) of dot products across all tiles and the partition function \(l_i = \sum_{j=1}^n \exp(s_{ij} - m_i)\). The output is \(f_\theta(x)_i = acc_i / l_i\).
         This algorithm can be extended to compute the entropy online with near zero additional overhead. 
     </p>
+    <hr class="header-separator">
 
       <h2>Online Entropy</h2>
       We can rearrange the entropy computation as
@@ -92,20 +105,20 @@
         r_i &\leftarrow r_i * \frac{l_i}{l_{ij}} + \sum_{\text{tile}} \exp(s_{ij} - m_i) s_{ij} \\
         \end{align*}
       The final result for the entropy is then \(H(p_i) = m_i + \log l_i - r_i\).
+    <hr class="header-separator">
 
-      <h2>GPU kernel</h2>
-    Any implementation of fused attention can be extended as above. It is particularly simple in this case because it only concerns the forward kernel.
-    Below is an extension of <a class="link-bold" href="https://github.com/triton-lang/triton/blob/main/python/tutorials/06-fused-attention.py">OpenAI's fused attention</a>, see <a class="link-bold" target="_blank" href="https://github.com/YOUR_USERNAME/YOUR_REPO">GitHub — Attention Entropy Kernel</a> for full code and usage.
-      <div class="code-wrap">
-        <button class="copy-btn" data-target="kernel">Copy</button>
-        <pre><code id="kernel" class="language-python">
+    <h2>GPU kernel</h2>
+    Any implementation of fused attention can be extended with this idea. This is particularly simple here because it only concerns the forward kernel.
+    Below is an extension of <a class="link-bold" href="https://github.com/triton-lang/triton/blob/main/python/tutorials/06-fused-attention.py">OpenAI's Fused Attention</a>. See my <a class="link-bold" target="_blank" href="https://github.com/YOUR_USERNAME/YOUR_REPO">GitHub</a> for full code and usage.
+<div class="code-wrap">
+    <button class="copy-btn" data-target="_attn_fwd">Copy</button>
+    <pre><code id="_attn_fwd" class="python">
 @triton.jit
 def _attn_fwd(sm_scale, M,
-    # -->
-    Z, H, desc_q, desc_k, desc_v, desc_o, N_CTX,
-    ENTROPY,
-    COMPUTE_ENTROPY: tl.constexpr,
-    # <--
+    Z, H,
+<span class="code-added">    ENTROPY,</span>
+    desc_q, desc_k, desc_v, desc_o, N_CTX,
+<span class="code-added">    COMPUTE_ENTROPY: tl.constexpr,</span>
     HEAD_DIM: tl.constexpr,
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
@@ -124,10 +137,9 @@ def _attn_fwd(sm_scale, M,
     m_i = tl.zeros([BLOCK_M], dtype=tl.float32) - float("inf")
     l_i = tl.zeros([BLOCK_M], dtype=tl.float32) + 1.0
     acc = tl.zeros([BLOCK_M, HEAD_DIM], dtype=tl.float32)
-    # -->
-    if COMPUTE_ENTROPY:
+<span class="code-added">    if COMPUTE_ENTROPY:
         r_i = tl.zeros([BLOCK_M], dtype=tl.float32)
-    # <--
+</span>
     ...
     # epilogue
     m_i += tl.math.log2(l_i)
@@ -135,29 +147,25 @@ def _attn_fwd(sm_scale, M,
     m_ptrs = M + off_hz * N_CTX + offs_m
     tl.store(m_ptrs, m_i)
     desc_o.store([qo_offset_y, 0], acc.to(dtype))
-    # -->
-    if COMPUTE_ENTROPY:
-    entropy_ptrs = ENTROPY + off_hz * N_CTX + offs_m
+<span class="code-added">    if COMPUTE_ENTROPY:
+        entropy_ptrs = ENTROPY + off_hz * N_CTX + offs_m
         tl.store(entropy_ptrs, m_i - r_i)
-    # <--
-
-        </code></pre>
-      </div>
+</span>
+    </code></pre>
+</div>
       
 
-      <div class="code-wrap">
-        <button class="copy-btn" data-target="kernel">Copy</button>
-        <pre><code id="kernel" class="language-python">
+<div class="code-wrap">
+    <button class="copy-btn" data-target="_attn_fwd_inner">Copy</button>
+    <pre><code id="_attn_fwd_inner" class="python">
 @triton.jit
 def _attn_fwd_inner(
     acc, l_i, m_i,
-    # -->
-    r_i,
-    COMPUTE_ENTROPY: tl.constexpr,
-    # <--
+<span class="code-added">    r_i,</span>
     q,
     desc_k, desc_v,
     offset_y, dtype: tl.constexpr, start_m, qk_scale,
+<span class="code-added">    COMPUTE_ENTROPY: tl.constexpr,</span>
     BLOCK_M: tl.constexpr, HEAD_DIM: tl.constexpr, BLOCK_N: tl.constexpr,
     STAGE: tl.constexpr, offs_m: tl.constexpr, offs_n: tl.constexpr,
     N_CTX: tl.constexpr, warp_specialize: tl.constexpr, IS_HOPPER: tl.constexpr
@@ -186,17 +194,14 @@ def _attn_fwd_inner(
             mask = offs_m[:, None] >= (start_n + offs_n[None, :])
             qk = qk * qk_scale + tl.where(mask, 0, -1.0e6)
             m_ij = tl.maximum(m_i, tl.max(qk, 1))
-            # -->
-            # qk -= m_ij[:, None]
-            # <--
+<span class="code-removed">            qk -= m_ij[:, None]
+</span>
         else:
             m_ij = tl.maximum(m_i, tl.max(qk, 1) * qk_scale)
-            # -->
-            # qk = qk * qk_scale - m_ij[:, None]
-            # <--
-            # -->
-            qk = qk * qk_scale
-            # <--
+<span class="code-removed">            qk = qk * qk_scale - m_ij[:, None]
+</span>
+<span class="code-added">            qk = qk * qk_scale
+</span>
         p = tl.math.exp2(qk)
         # -- compute correction factor
         alpha = tl.math.exp2(m_i - m_ij)
@@ -211,7 +216,7 @@ def _attn_fwd_inner(
             acc = tl.join(acc0, acc1).permute(0, 2, 1).reshape([BM, BN])
         else:
             acc = acc * alpha[:, None]
-                    # prepare p and v for the dot
+        # prepare p and v for the dot
         if dtype == tl.float8e5:
             v = desc_v.load([0, offsetv_y]).T
         else:
@@ -223,25 +228,23 @@ def _attn_fwd_inner(
         # place this at the end of the loop to reduce register pressure
         l_i = l_i * alpha + l_ij
         m_i = m_ij
-        # -->
-        if COMPUTE_ENTROPY:
+<span class="code-added">        if COMPUTE_ENTROPY:
             r_i = tl.dot(p, qk, l_i / l_ij * r_i)
-        # <--
+</span>
         offsetk_y += BLOCK_N
         offsetv_y += BLOCK_N
     return acc, l_i, m_i
-        
-
-        </code></pre>
-      </div>
+    </code></pre>
+</div>
 
 
     </div>
 
-    <div class="footer"> Last updated Nov 23, 2025 </div>
+    <div class="footer"> Last updated <span id="today"></span></div>
 
   </div>
 
 </body>
+
 
 </html>

@@ -83,51 +83,73 @@ li {
 }
 
 /*specify content style*/
+code .code-removed {
+    display: inline-block;           /* extend background across full line width */
+    background: rgba(231, 76, 60, 0.18);   /* red-ish */
+    text-decoration: line-through;
+    padding-right: 1em;
+    border-radius: 3px;
+}
 
-/* inline superscript */
+code .code-added {
+    display: inline-block;           /* extend background across full line width */
+    background: rgba(46, 204, 113, 0.18);  /* green-ish */
+    padding-right: 1em;
+    border-radius: 3px;
+}
+
+.footnote-source {
+  display: none;
+}
+
 .footnote-ref {
-  font-size: 0.85em;
-  vertical-align: super;
-  cursor: help;
-  color: inherit;
   display: inline-block;
+  vertical-align: super;
+  font-size: 0.85em;
   line-height: 1;
   margin-left: 0.2em;
-  outline: none;
+  cursor: pointer;
+  color: inherit;
+  padding: 0.05rem 0.15rem;
+  border-radius: 0.25rem;
 }
+.footnote-ref:focus { outline: 2px solid rgba(0,0,0,0.12); }
 
-/* the floating tooltip that appears on the right */
-.footnote-tip {
+/* floating right-side box */
+.footnote-box {
   position: fixed;
-  right: 10rem;                /* distance from right edge */
-  max-width: 36ch;              /* control width for readability */
-  background: #fff;             /* adjust for dark mode if needed */
+  right: 1.25rem;
+  top: 15vh;                 /* default vertical offset */
+  max-width: 40ch;
+  width: min(40ch, 38vw);
+  background: #fff;
   color: #111;
   border: 1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-  padding: 0.75rem 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  padding: 0.9rem 1rem;
   border-radius: 8px;
+  z-index: 2000;
   font-size: 0.95rem;
-  line-height: 1.4;
-  z-index: 1200;
-  display: none;                /* shown by JS */
-}
-
-/* small number styling inside the sup element */
-.footnote-ref sup {
-  font-weight: 600;
-  color: #444;
+  line-height: 1.5;
+  display: none;            /* shown by JS */
 }
 
 /* visible state */
-.footnote-tip.show {
-  display: block;
+.footnote-box.show { display: block; }
+
+/* small header inside box (number + close) */
+.footnote-box .fn-head {
+  display:flex; justify-content:space-between; align-items:center;
+  gap:0.5rem; margin-bottom:0.4rem;
+}
+.footnote-box .fn-num { font-weight:700; font-family: "Open Sans", sans-serif; }
+.footnote-box .fn-close { background:transparent; border:none; cursor:pointer; font-size:0.95rem; color:#666; }
+
+/* adapt on narrow screens */
+@media (max-width: 640px) {
+  .footnote-box { right: 0.75rem; left: 0.75rem; width: auto; max-width: none; top: 10vh; }
 }
 
-/* adapt on small screens: place tooltip lower so it doesn't block text */
-@media (max-width: 640px) {
-  .footnote-tip { right: 0.75rem; left: 0.75rem; max-width: none; }
-}
 
 
 .back-left {
@@ -173,12 +195,24 @@ code {
   white-space: pre;
 }
 
+.header-separator {
+  display: block;             /* ensure it's a block-level rule */
+  box-sizing: border-box;     /* include padding in width calculations */
+  width: 100%;                /* span full width of its container */
+  margin: 1rem 0;             /* adjust spacing as you like */
+  height: 0;                  /* remove default height so only border shows */
+  padding: 0;                 /* remove default padding */
+  border: none;               /* remove any default borders */
+  border-top: 1px solid #e5e5e5; /* same stroke as .site-header */
+  background: transparent;    /* ensure no background fills the rule */
+  appearance: none;           /* remove browser-specific styling */
+}
 
 .site-header {
   position: relative;
   text-align: center;
   border-bottom: 1px solid #e5e5e5;
-  padding: 5rem 0rem 2em 0em;
+  padding: 5rem 0rem 1em 0em;
 }
 
 .site-header .back-left {
@@ -200,7 +234,7 @@ code {
 
 .site-header .title-wrap .post-meta {
   color: #666;
-  font-size: 0.9rem;
+  font-size: 1.0rem;
   margin-top: 0.2rem;
   font-family: "Open Sans", sans-serif;
 }
