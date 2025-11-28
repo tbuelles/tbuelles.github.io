@@ -110,7 +110,8 @@
 
     <h2>GPU kernel</h2>
     Any implementation of fused attention can be extended with this idea. This is particularly simple here because it only concerns the forward kernel.
-    Below is an extension of <a class="link-bold" href="https://github.com/triton-lang/triton/blob/main/python/tutorials/06-fused-attention.py">OpenAI's Fused Attention</a>. See my <a class="link-bold" target="_blank" href="https://github.com/YOUR_USERNAME/YOUR_REPO">GitHub</a> for full code and usage.
+    Below is an extension of <a class="link-bold" href="https://github.com/triton-lang/triton/blob/main/python/tutorials/06-fused-attention.py">OpenAI's Fused Attention</a>.
+    <!-- See my <a class="link-bold" target="_blank" href="https://github.com/YOUR_USERNAME/YOUR_REPO">GitHub</a> for full code and usage. -->
 <div class="code-wrap">
     <button class="copy-btn" data-target="_attn_fwd">Copy</button>
     <pre><code id="_attn_fwd" class="python">
@@ -193,16 +194,19 @@ def _attn_fwd_inner(
         qk = tl.dot(q, k)
         if STAGE == 2:
             mask = offs_m[:, None] >= (start_n + offs_n[None, :])
-            qk = qk * qk_scale + tl.where(mask, 0, -1.0e6)
+<span class="code-removed">            qk = qk * qk_scale + tl.where(mask, 0, -1.0e6)
+</span>
             m_ij = tl.maximum(m_i, tl.max(qk, 1))
-<span class="code-removed">            qk -= m_ij[:, None]
+<span class="code-added">            qk2 = qk * qk_scale + tl.where(mask, 0, -1.0e6)
+            qk = qk2 - m_ij[:, None]
 </span>
         else:
             m_ij = tl.maximum(m_i, tl.max(qk, 1) * qk_scale)
 <span class="code-removed">            qk = qk * qk_scale - m_ij[:, None]
 </span>
-<span class="code-added">            qk = qk * qk_scale
-</span>
+<span class="code-added">            qk2 = qk * qk_scale
+            qk = qk2 - m_ij[:, None]
+</span>            
         p = tl.math.exp2(qk)
         # -- compute correction factor
         alpha = tl.math.exp2(m_i - m_ij)
@@ -230,7 +234,7 @@ def _attn_fwd_inner(
         l_i = l_i * alpha + l_ij
         m_i = m_ij
 <span class="code-added">        if COMPUTE_ENTROPY:
-            r_i = tl.dot(p, qk, l_i / l_ij * r_i)
+            r_i = tl.dot(p, qk2, l_i / l_ij * r_i)
 </span>
         offsetk_y += BLOCK_N
         offsetv_y += BLOCK_N
