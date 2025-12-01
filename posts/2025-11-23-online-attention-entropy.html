@@ -30,7 +30,7 @@
       <a class="link-bold back-left" href="/blog.html" aria-label="Blog"><i class="fa fa-arrow-left"></i> Blog</a>
       <div class="title-wrap">
         <h1>Online Attention Entropy</h1>
-        <div class="post-meta"><span class="today"></span></div>
+        <div class="post-meta"><span></span>November 26, 2025</div>
       </div>
     </header>
 
@@ -76,7 +76,7 @@
         <br>
         3+) FlashAttention2, FlashAttention3, ...
         </span>
-        The algorithm is best explained in Triton jargon (I find this more intuitive than CUDA). Notation is mostly consistent with code below.
+        The algorithm is best explained in Triton jargon (I find this more intuitive than CUDA). Notation is mostly consistent with <a class="link-bold" href="https://github.com/triton-lang/triton/blob/main/python/tutorials/06-fused-attention.py">OpenAI's kernel</a>.
         <br>
         The work is divided into parallel programs each processing a block of queries \(q_i\).<span class="footnote-ref"></span>
         <span class="footnote-source">Note that from now on \(i\) denotes a block of indices rather than a single index.</span>
@@ -110,17 +110,17 @@
 
     <h2>GPU kernel</h2>
     Any implementation of fused attention can be extended with this idea. This is particularly simple here because it only concerns the forward kernel.
-    Below is an extension of <a class="link-bold" href="https://github.com/triton-lang/triton/blob/main/python/tutorials/06-fused-attention.py">OpenAI's Fused Attention</a>.
+    Below is a minimal extension of OpenAI's kernel.
     <!-- See my <a class="link-bold" target="_blank" href="https://github.com/YOUR_USERNAME/YOUR_REPO">GitHub</a> for full code and usage. -->
 <div class="code-wrap">
     <button class="copy-btn" data-target="_attn_fwd">Copy</button>
     <pre><code id="_attn_fwd" class="python">
 @triton.jit
-def _attn_fwd(sm_scale, M,
-    Z, H,
-<span class="code-added">    ENTROPY,</span>
-    desc_q, desc_k, desc_v, desc_o, N_CTX,
-<span class="code-added">    COMPUTE_ENTROPY: tl.constexpr,</span>
+def _attn_fwd(
+    sm_scale, M, Z, H,
+<span class="code-added">    Ent,</span>
+    desc_q, desc_k, desc_v, desc_o, 
+    N_CTX,
     HEAD_DIM: tl.constexpr,
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
@@ -128,6 +128,7 @@ def _attn_fwd(sm_scale, M,
     STAGE: tl.constexpr,
     warp_specialize: tl.constexpr,
     IS_HOPPER: tl.constexpr,
+<span class="code-added">    COMPUTE_ENTROPY: tl.constexpr,</span>
 ):
     ...
     offset_y = off_z * (N_CTX * H) + off_h * N_CTX
@@ -143,6 +144,30 @@ def _attn_fwd(sm_scale, M,
         r_i = tl.zeros([BLOCK_M], dtype=tl.float32)
 </span>
     ...
+    # stage 1: off-band
+    # For causal = True, STAGE = 3 and _attn_fwd_inner gets 1 as its STAGE
+    # For causal = False, STAGE = 1, and _attn_fwd_inner gets 3 as its STAGE
+    if STAGE & 1:
+        acc, l_i, m_i, r_i = _attn_fwd_inner(
+            acc, l_i, m_i, q,  #
+            desc_k, desc_v,  #
+            offset_y, dtype, start_m, qk_scale,  #
+            BLOCK_M, HEAD_DIM, BLOCK_N,  #
+            4 - STAGE, offs_m, offs_n, N_CTX,  #
+            warp_specialize, IS_HOPPER,
+<span class="code-added">            COMPUTE_ENTROPY,</span>
+        )
+    # stage 2: on-band
+    if STAGE & 2:
+        acc, l_i, m_i, r_i = _attn_fwd_inner(
+            acc, l_i, m_i, q,  #
+            desc_k, desc_v,  #
+            offset_y, dtype, start_m, qk_scale,  #
+            BLOCK_M, HEAD_DIM, BLOCK_N,  #
+            2, offs_m, offs_n, N_CTX,  #
+            warp_specialize, IS_HOPPER,
+<span class="code-added">            COMPUTE_ENTROPY,</span>
+        )
     # epilogue
     m_i += tl.math.log2(l_i)
     acc = acc / l_i[:, None]
@@ -150,7 +175,7 @@ def _attn_fwd(sm_scale, M,
     tl.store(m_ptrs, m_i)
     desc_o.store([qo_offset_y, 0], acc.to(dtype))
 <span class="code-added">    if COMPUTE_ENTROPY:
-        entropy_ptrs = ENTROPY + off_hz * N_CTX + offs_m
+        entropy_ptrs = Ent + off_hz * N_CTX + offs_m
         tl.store(entropy_ptrs, m_i - r_i)
 </span>
     </code></pre>
@@ -162,15 +187,13 @@ def _attn_fwd(sm_scale, M,
     <pre><code id="_attn_fwd_inner" class="python">
 @triton.jit
 def _attn_fwd_inner(
-    acc, l_i, m_i,
-<span class="code-added">    r_i,</span>
-    q,
-    desc_k, desc_v,
+    acc, l_i, m_i, <span class="code-added"> r_i,</span>
+    q, desc_k, desc_v,
     offset_y, dtype: tl.constexpr, start_m, qk_scale,
-<span class="code-added">    COMPUTE_ENTROPY: tl.constexpr,</span>
     BLOCK_M: tl.constexpr, HEAD_DIM: tl.constexpr, BLOCK_N: tl.constexpr,
     STAGE: tl.constexpr, offs_m: tl.constexpr, offs_n: tl.constexpr,
-    N_CTX: tl.constexpr, warp_specialize: tl.constexpr, IS_HOPPER: tl.constexpr
+    N_CTX: tl.constexpr, warp_specialize: tl.constexpr, IS_HOPPER: tl.constexpr,
+<span class="code-added">    COMPUTE_ENTROPY: tl.constexpr,</span>
 ):
     # range of values handled by this stage
     if STAGE == 1:
@@ -238,8 +261,94 @@ def _attn_fwd_inner(
 </span>
         offsetk_y += BLOCK_N
         offsetv_y += BLOCK_N
-    return acc, l_i, m_i
+    return acc, l_i, m_i, <span class="code-added"> r_i</span>
     </code></pre>
+<div class="code-wrap">
+    <button class="copy-btn" data-target="_attn_fwd_inner">Copy</button>
+    <pre><code id="_attn_fwd_inner" class="python">
+class _attention(torch.autograd.Function):
+
+@staticmethod
+def forward(
+    ctx, q, k, v,
+    causal, sm_scale,
+    warp_specialize=True,
+<span class="code-added">    compute_entropy=False,
+</span>    
+):
+    # shape constraints
+    HEAD_DIM_Q, HEAD_DIM_K = q.shape[-1], k.shape[-1]
+    # when v is in float8_e5m2 it is transposed.
+    HEAD_DIM_V = v.shape[-1]
+    assert HEAD_DIM_Q == HEAD_DIM_K and HEAD_DIM_K == HEAD_DIM_V
+    assert HEAD_DIM_K in {16, 32, 64, 128, 256}
+    o = torch.empty_like(q)
+    stage = 3 if causal else 1
+    extra_kern_args = {}
+    # Tuning for AMD target
+    if is_hip():
+        waves_per_eu = 3 if HEAD_DIM_K <= 64 else 2
+        extra_kern_args = {"waves_per_eu": waves_per_eu, "allow_flush_denorm": True}
+
+    M = torch.empty((q.shape[0], q.shape[1], q.shape[2]), device=q.device, dtype=torch.float32)
+<span class="code-added">    ent = torch.empty((q.shape[0], q.shape[1], q.shape[2]), device=q.device, dtype=torch.float32)
+</span>
+    # Use device_descriptor for Hopper + warpspec.
+    if supports_host_descriptor() and not (is_hopper() and warp_specialize):
+        # Note that on Hopper we cannot perform a FP8 dot with a non-transposed second tensor
+        y_dim = q.shape[0] * q.shape[1] * q.shape[2]
+
+        dummy_block = [1, 1]
+        desc_q = TensorDescriptor(q, shape=[y_dim, HEAD_DIM_K], strides=[HEAD_DIM_K, 1], block_shape=dummy_block)
+        if q.dtype == torch.float8_e5m2:
+            desc_v = TensorDescriptor(v, shape=[HEAD_DIM_K, y_dim], strides=[q.shape[2], 1],
+                                        block_shape=dummy_block)
+        else:
+            desc_v = TensorDescriptor(v, shape=[y_dim, HEAD_DIM_K], strides=[HEAD_DIM_K, 1],
+                                        block_shape=dummy_block)
+        desc_k = TensorDescriptor(k, shape=[y_dim, HEAD_DIM_K], strides=[HEAD_DIM_K, 1], block_shape=dummy_block)
+        desc_o = TensorDescriptor(o, shape=[y_dim, HEAD_DIM_K], strides=[HEAD_DIM_K, 1], block_shape=dummy_block)
+    else:
+        desc_q = q
+        desc_v = v
+        desc_k = k
+        desc_o = o
+
+    def alloc_fn(size: int, align: int, _):
+        return torch.empty(size, dtype=torch.int8, device="cuda")
+
+    triton.set_allocator(alloc_fn)
+
+    def grid(META):
+        return (triton.cdiv(q.shape[2], META["BLOCK_M"]), q.shape[0] * q.shape[1], 1)
+
+    ctx.grid = grid
+    if is_blackwell() and warp_specialize:
+        if HEAD_DIM_K == 128 and q.dtype == torch.float16:
+            extra_kern_args["maxnreg"] = 168
+        else:
+            extra_kern_args["maxnreg"] = 80
+    _attn_fwd[grid](
+        sm_scale, M,  #
+        q.shape[0], q.shape[1],  #
+<span class="code-added">        ent,</span>
+        desc_q, desc_k, desc_v, desc_o,  #
+        N_CTX=q.shape[2],  #
+<span class="code-added">        COMPUTE_ENTROPY=compute_entropy,</span>
+        HEAD_DIM=HEAD_DIM_K,  #
+        FP8_OUTPUT=q.dtype == torch.float8_e5m2,  #
+        STAGE=stage,  #
+        warp_specialize=warp_specialize,  #
+        IS_HOPPER=is_hopper(),  #
+        **extra_kern_args)
+
+    ctx.save_for_backward(q, k, v, o, M)
+    ctx.sm_scale = sm_scale
+    ctx.HEAD_DIM = HEAD_DIM_K
+    ctx.causal = causal
+    return o
+    </code></pre>
+
 </div>
 
 
