@@ -24,83 +24,162 @@
     <header class="site-header">
       <a class="link-bold back-left" href="/blog.html" aria-label="Blog"><i class="fa fa-arrow-left"></i> Blog</a>
       <div class="title-wrap">
-        <h1>Your model needs James–Stein</h1>
+        <h1>Your model needs James&ndash;Stein</h1>
         <div class="post-meta"><span></span>December 28, 2025</div>
       </div>
     </header>
 
     <!-- Body -->
     <div class="section">
-
       <h3>Intro</h3>
       <p>
-        <!-- Motivation: why shrinkage shows up in ML, why JS is surprising, what we'll connect to. -->
+        The James&ndash;Stein estimator revolutionized statistics &ndash; but not machine learning. Well actually it did, but practitioners don't know.
+        It shows that in high dimensions the naive unbiased estimator is inadmissible (bad).
+        Shrinkage towards zero beats it uniformly.
+        In this note, I review the estimation theory, connect James&ndash;Stein to L2 regularization,
+        and explain why weight decay is a principled default.
+        <!-- TODO: Connect to Bayesian? -->
       </p>
       <hr class="header-separator">
 
-      <h3>Setup: Normal Means as a “One-Sample” Regression</h3>
+      <h2>Normal Means and Risk</h2>
       <p>
-        <!-- Define y ∈ R^k, y = μ + ε, ε ~ N(0, σ^2 I), σ known (σ=1).
-             Explain why this is “linear regression with X=I”. -->
+        Consider the normal means model
+        \[
+        y = \mu + \varepsilon,\quad \varepsilon \sim \mathcal{N}(0, \sigma^2 I_k),\quad y,\mu \in \mathbb{R}^k.
+        \]
+        We observe data \(y\) and want to estimate \(\mu\). For now, we assume \(\varepsilon\) independent of \(\mu\) with fixed but unknown \(\sigma^2\).
+        This is linear regression without features, i.e. design matrix \(X = I_k\).
+        For an estimator \(\hat \mu(y)\), the frequentist risk under squared error is
+        \[
+        R(\mu, \hat \mu) = \mathbb{E}_\mu \left[ \|\hat \mu(y) - \mu\|_2^2 \right].
+        \]
+      </p>
+      <p>
+        The MLE estimator equals the least squares estimator: \(\hat \mu_{\text{MLE}} = y\).
+        Its risk is constant in \(\mu\):
+        \[
+        R(\mu, \hat \mu_{\text{MLE}}) = \mathbb{E}_\mu \|y-\mu\|_2^2
+        = \mathbb{E}\|\varepsilon\|_2^2 = k \sigma^2.
+        \]
       </p>
       <hr class="header-separator">
 
-      <h3>MLE / Least Squares</h3>
+      <h2>James–Stein Shrinkage</h2>
       <p>
-        <!-- Derive μ_hat_MLE = y; risk = k σ^2. -->
+        The James–Stein estimator shrinks the observation towards zero by a data-adaptive factor:
+        \[
+        \hat \mu_{\text{JS}}(y) = \left(1 - \frac{(k-2)\sigma^2}{\|y\|_2^2}\right) y.
+        \]
+        The positive-part version truncates negative shrinkage,
+        \[
+        \hat \mu_{\text{JS}}^+(y) = \left(1 - \frac{(k-2)\sigma^2}{\|y\|_2^2}\right)_+ y,
+        \]
+        and further improves risk.
+        The striking fact is that for \(k \ge 3\),
+        \[
+        R(\mu, \hat \mu_{\text{JS}}) < R(\mu, \hat \mu_{\text{MLE}}) = k\sigma^2 \quad \text{for all } \mu.
+        \]
+      </p>
+      <p>
+        One way to see this is via Stein's unbiased risk estimate (SURE).
+        Write \(\hat \mu(y) = y + g(y)\) with a weakly differentiable \(g\).
+        Then
+        \[
+        R(\mu, \hat \mu) = k\sigma^2 + \mathbb{E}_\mu\left[ \|g(y)\|_2^2 + 2\sigma^2 \nabla \cdot g(y) \right].
+        \]
+        For James–Stein, \(g(y) = -\frac{(k-2)\sigma^2}{\|y\|_2^2} y\), which yields
+        \[
+        R(\mu, \hat \mu_{\text{JS}}) = k\sigma^2 - (k-2)^2 \sigma^4\, \mathbb{E}_\mu\left[\frac{1}{\|y\|_2^2}\right].
+        \]
+        The second term is strictly positive, so JS strictly dominates the MLE in risk.
       </p>
       <hr class="header-separator">
 
-      <h3>James–Stein Estimator</h3>
+      <h2>Ridge / L2 as Constant Shrinkage</h2>
       <p>
-        <!-- Present μ_hat_JS and μ_hat_JS^+; intuition: data-adaptive shrinkage; mention k≥3. -->
+        Now compare to L2 regularization in the same model.
+        Solve the penalized least-squares problem
+        \[
+        \hat \mu_{\lambda} = \arg\min_\mu \; \|y-\mu\|_2^2 + \lambda \|\mu\|_2^2.
+        \]
+        The first-order condition gives
+        \[
+        (1+\lambda)\hat \mu_{\lambda} = y \quad \Rightarrow \quad \hat \mu_{\lambda} = \frac{1}{1+\lambda} y.
+        \]
+        So ridge is a constant shrinkage rule: every coordinate is scaled by the same factor,
+        regardless of the signal strength.
+      </p>
+      <p>
+        James–Stein is the same qualitative idea but with a data-adaptive shrinkage factor
+        \(1 - (k-2)\sigma^2/\|y\|_2^2\).
+        Ridge is a fixed compromise; JS is a rule that shrinks more when the overall signal looks small.
       </p>
       <hr class="header-separator">
 
-      <h3>L2 Regularization (Ridge) in the Same Model</h3>
-      <p>
-        <!-- Solve argmin ||y-μ||^2 + λ||μ||^2; show constant shrink μ_hat_ridge = 1/(1+λ) y.
-             Contrast: constant vs data-adaptive shrink. -->
-      </p>
-      <hr class="header-separator">
+      <h2>From Estimators to Training: L2 vs Weight Decay</h2>
 
-      <h2>From Estimators to Training: Weight Decay vs L2 Regularization</h2>
-
-      <h3>Objective-level L2 Regularization</h3>
+      <h3>Objective-level L2</h3>
       <p>
-        <!-- Define minimize L(θ) + (λ/2)||θ||^2; connect to MAP / Gaussian prior. -->
+        In ML, L2 regularization adds a quadratic penalty to the loss:
+        \[
+        \min_\theta \; L(\theta) + \frac{\lambda}{2}\|\theta\|_2^2.
+        \]
+        This is equivalent to MAP estimation under a Gaussian prior \(\theta \sim \mathcal{N}(0, \lambda^{-1} I)\).
       </p>
       <hr class="header-separator">
 
       <h3>Update-level Weight Decay</h3>
       <p>
-        <!-- Show θ_{t+1} = (1-ηλ)θ_t - η∇L(θ_t); clarify when equivalent to L2 penalty and when not (e.g. AdamW). -->
+        With SGD, L2 regularization yields the update
+        \[
+        \theta_{t+1} = \theta_t - \eta \nabla L(\theta_t) - \eta \lambda \theta_t
+        = (1-\eta\lambda)\theta_t - \eta \nabla L(\theta_t).
+        \]
+        The multiplicative term \((1-\eta\lambda)\) is exactly weight decay.
+        For adaptive methods (Adam, RMSProp), an L2 penalty and decoupled weight decay are not the same;
+        AdamW implements the decoupled form to preserve true shrinkage.
       </p>
       <hr class="header-separator">
 
-      <h2>A Tiny Worked Example</h2>
+      <h2>Why James–Stein Argues for Weight Decay</h2>
       <p>
-        <!-- Pick k=10, σ=1; show shrink factors numerically; maybe plot (optional later). -->
+        The normal-means model is crude, but its message survives in high-dimensional ML:
+      </p>
+      <ul>
+        <li>
+          In large \(k\), even an unbiased estimator of many parameters is improvable by shrinkage.
+          JS says the naive solution is dominated.
+        </li>
+        <li>
+          Weight decay is the simplest shrinkage rule: it pulls parameters toward zero every step,
+          just like ridge in the normal means model.
+        </li>
+        <li>
+          When the data are weak (small effective \(\|y\|_2\) or high noise), shrinkage should be stronger.
+          JS achieves this adaptively; in deep nets we approximate it with constant decay plus early stopping.
+        </li>
+        <li>
+          The risk reduction from JS is uniform in \(\mu\); the improvement is not a prior artifact.
+          That is a strong argument for weight decay as a default, even when you are not fully Bayesian.
+        </li>
+      </ul>
+      <p>
+        The practical takeaway is not that L2 equals JS, but that the default of “no shrinkage”
+        is statistically indefensible in high dimensions.
+        Weight decay is the simplest, scalable, and optimizer-friendly way to encode that lesson.
       </p>
       <hr class="header-separator">
 
-      <h2>Neural Network Intuition</h2>
+      <h2>References</h2>
       <p>
-        <!-- High-level: many parameters, implicit/explicit shrinkage; JS-like = adaptive / hierarchical regularization. -->
-      </p>
-      <hr class="header-separator">
-
-      <h2>Appendix</h2>
-
-      <h3>Stein’s Lemma and SURE (Sketch)</h3>
-      <p>
-        <!-- Brief: why JS dominates MLE; cite Stein’s unbiased risk estimate. -->
-      </p>
-      <hr class="header-separator">
-
-      <h3>References</h3>
-      <p>
-        <!-- Add refs: Stein 1956, James–Stein 1961, ridge regression / Tikhonov, decoupled weight decay (AdamW). -->
+        Stein (1956), “Inadmissibility of the usual estimator for the mean of a multivariate normal distribution.”
+        <br>
+        James and Stein (1961), “Estimation with quadratic loss.”
+        <br>
+        Tikhonov (1963) / Hoerl and Kennard (1970), ridge regression.
+        <br>
+        Loshchilov and Hutter (2019), “Decoupled Weight Decay Regularization (AdamW).”
       </p>
 
     </div>
