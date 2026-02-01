@@ -24,7 +24,7 @@
     <header class="site-header">
       <a class="link-bold back-left" href="/blog.html" aria-label="Blog"><i class="fa fa-arrow-left"></i> Blog</a>
       <div class="title-wrap">
-        <h1>Your model needs James&ndash;Stein</h1>
+        <h1>James&ndash;Stein</h1>
         <div class="post-meta"><span></span>December 28, 2025</div>
       </div>
     </header>
@@ -33,11 +33,10 @@
     <div class="section">
       <h3>Intro</h3>
       <p>
-        James&ndash;Stein estimation revolutionized statistics &ndash; but not machine learning. Well, actually it did, but practitioners don't realize it.
+        James&ndash;Stein changed statistical inference forever &ndash; ML didn't get the memo. At least many practitioners seem oddly unaware of it.
         In 1955, Charles Stein found that maximum likelihood estimators for Gaussian models are inadmissible (bad).
-        Shrinkage towards zero beats it uniformly.
-        In this note, I review the estimation theory and connect James&ndash;Stein to two familiar methods in machine learning: L2 regularization,
-        and weight decay.
+        Shrinkage towards zero beats it uniformly (good).
+        In this note, I review the estimation theory and connect James&ndash;Stein to two popular methods: L2 regularization and weight decay.
         <!-- TODO: Connect to Bayesian? -->
       </p>
       <hr class="header-separator">
@@ -49,19 +48,14 @@
         y = \mu + \varepsilon,\quad \varepsilon \sim \mathcal{N}(0, \sigma^2 I_k),\quad y,\mu \in \mathbb{R}^k.
         \]
         We observe data \(y\) and want to estimate \(\mu\). For now, we assume \(\varepsilon\) independent of \(\mu\) with fixed but unknown \(\sigma^2\).
-        This is linear regression without features, i.e. design matrix \(X = I_k\).
+        This is linear regression without features other than constant one for the intercept.
         For an estimator \(\hat \mu(y)\), the frequentist risk under squared error is
         \[
         R(\mu, \hat \mu) = \mathbb{E}_\mu \left[ \|\hat \mu(y) - \mu\|_2^2 \right].
         \]
       </p>
       <p>
-        The MLE estimator equals the least squares estimator: \(\hat \mu_{\text{MLE}} = y\).
-        Its risk is constant in \(\mu\):
-        \[
-        R(\mu, \hat \mu_{\text{MLE}}) = \mathbb{E}_\mu \|y-\mu\|_2^2
-        = \mathbb{E}\|\varepsilon\|_2^2 = k \sigma^2.
-        \]
+        The MLE is the least squares estimator \(\hat \mu_{\text{MLE}} = y\) which has constant risk \(R(\mu, \hat \mu_{\text{MLE}}) = k \sigma^2\).
       </p>
       <hr class="header-separator">
 
@@ -121,7 +115,7 @@
 
       <h3>Objective-level L2</h3>
       <p>
-        In ML, L2 regularization adds a quadratic penalty to the loss:
+        In ML, using L2 regularization adds a quadratic penalty to the loss:
         \[
         \min_\theta \; L(\theta) + \frac{\lambda}{2}\|\theta\|_2^2.
         \]
@@ -131,7 +125,7 @@
 
       <h3>Update-level Weight Decay</h3>
       <p>
-        With SGD, L2 regularization yields the update
+        With SGD, using L2 regularization yields the update
         \[
         \theta_{t+1} = \theta_t - \eta \nabla L(\theta_t) - \eta \lambda \theta_t
         = (1-\eta\lambda)\theta_t - \eta \nabla L(\theta_t).
@@ -142,9 +136,9 @@
       </p>
       <hr class="header-separator">
 
-      <h2>Why James–Stein Argues for Weight Decay</h2>
+      <h2>Takeaway</h2>
       <p>
-        The normal-means model is crude, but its message survives in high-dimensional ML:
+        The Gaussian model is simplistic, but its message survives in high-dimensional ML:
       </p>
       <ul>
         <li>
@@ -165,9 +159,8 @@
         </li>
       </ul>
       <p>
-        The practical takeaway is not that L2 equals JS, but that the default of “no shrinkage”
-        is statistically indefensible in high dimensions.
-        Weight decay is the simplest, scalable, and optimizer-friendly way to encode that lesson.
+        The practical takeaway is that “no shrinkage” makes little sense in almost all situations.
+        Weight decay is a simple, scalable, and optimizer-friendly approach towards JS style shrinkage.
       </p>
       <hr class="header-separator">
 

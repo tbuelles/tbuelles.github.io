@@ -26,42 +26,46 @@
     <!-- Intro -->
     <div class="section">
       <p class="post-abstract">
-        Thoughts on research and applied stats. Experiences as a mathematician in industry. Opinions are my own.
+        Thoughts on research, applied stats, and machine learning. Experiences as a mathematician in industry.
       </p>
     </div>
 
     <!-- Posts list -->
-    <div class="section posts-list">
-    
-    <!-- Post 2 -->
-    <article class="post-summary">
-    <a class="post-link" href="posts/2025-12-28-JS-L2.html">
-        <h2 class="post-title">Your model needs James–Stein</h2>
-        <div class="post-meta"><span>December 28, 2025</span></div>
-        <p class="post-abstract">
-        The James–Stein estimator shows that the maximum likelihood estimator is inadmissible for multivariate normal means.
-        This leads to a surprising result: shrinkage estimators can outperform the MLE.
-        In machine learning, this idea connects to L2 regularization.
-        </p>
-    </a>
-    </article>
+    <div class="posts-list">
+    <div class="section">
+        <!-- Post 2 -->
+        <article class="post-summary">
+        <a class="post-link" href="posts/2025-12-28-james-stein.html">
+            <h2 class="post-title">James–Stein</h2>
+            <div class="post-meta"><span>December 28, 2025</span></div>
+            <p class="post-abstract">
+    James&ndash;Stein changed statistical inference forever &ndash; ML didn't get the memo. At least many practitioners seem oddly unaware of it.
+            In 1955, Charles Stein found that maximum likelihood estimators for Gaussian models are inadmissible (bad).
+            Shrinkage towards zero beats it uniformly (good).
+            In this note, I review the estimation theory and connect James&ndash;Stein to two popular methods: L2 regularization and weight decay.
+            </p>
+        </a>
+        </article>
+    </div>
 
     <!-- Post 1 -->
-    <article class="post-summary">
-    <a class="post-link" href="posts/2025-11-23-online-attention-entropy.html">
-        <h2 class="post-title">Your model needs entropy</h2>
-        <div class="post-meta"><span>November 26, 2025</span></div>
-        <p class="post-abstract">
-        Attention entropy collapse is a failure mode in ML where attention logits converge to a small number of states.
-        In practice, this is often poorly monitored and patched with normalization.
-        In this note, I discuss how to extend the attention algorithm to compute entropy online with the same GPU kernel.
-        </p>
-    </a>
-    </article>
+    <div class="section">
+        <article class="post-summary">
+        <a class="post-link" href="posts/2025-11-23-online-attention-entropy.html">
+            <h2 class="post-title">Online Attention Entropy</h2>
+            <div class="post-meta"><span>November 26, 2025</span></div>
+            <p class="post-abstract">
+            Attention entropy collapse is a failure mode in ML where attention logits converge to a small number of states.
+            In practice, this is often poorly monitored and patched with normalization.
+            In this note, I discuss how to extend the attention algorithm to compute entropy online with the same GPU kernel.
+            </p>
+        </a>
+        </article>
+    </div>
 
     </div>
 
-    <div class="footer"> Last updated December 28, 2025</div>
+    <div class="footer"> Last updated February 1, 2026</div>
 
   </div>
 
